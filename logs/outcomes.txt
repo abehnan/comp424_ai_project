@@ -164,3 +164,5 @@
 169,RandomPlayer,xxxxxxxxx,0,RandomPlayer,15,game00169.log,
 170,xxxxxxxxx,RandomPlayer,0,xxxxxxxxx,15,game00170.log,
 171,RandomPlayer,xxxxxxxxx,0,RandomPlayer,15,game00171.log,
+1,RandomPlayer,GreedyPlayer,1,GreedyPlayer,10,game00001.log,
+2,RandomPlayer,GreedyPlayer,1,GreedyPlayer,6,game00002.log,
