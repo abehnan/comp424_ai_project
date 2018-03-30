@@ -13,7 +13,7 @@ public class StudentPlayer extends TablutPlayer {
      * associate you with your agent. The constructor should do nothing else.
      */
     public StudentPlayer() {
-        super("xxxxxxxxx");
+        super("260639146");
     }
 
     /**
