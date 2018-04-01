@@ -56,7 +56,7 @@ public class Autoplay {
                     Thread.currentThread().interrupt();
                 }
 
-                Process client1 = ((i % 2 == 0) ? client1_pb.start() : client2_pb.start());
+                Process client1 =  client1_pb.start();
 
                 try {
                     Thread.sleep(500);
@@ -64,7 +64,7 @@ public class Autoplay {
                     Thread.currentThread().interrupt();
                 }
 
-                Process client2 = ((i % 2 == 0) ? client2_pb.start() : client1_pb.start());
+                Process client2 = client2_pb.start();
 
                 try {
                     client1.waitFor();
