@@ -24,7 +24,8 @@ public class StudentPlayer extends TablutPlayer {
     private final int KING_DISTANCE_VALUE = 1;
     private final int VULNERABLE_PIECE_PENALTY = 1;
     private final int VULNERABLE_KING_PENALTY = 150;
-    private final int VULNERABLE_CAPTURE_BONUS = 30;
+    private final int CENTER_CAPTURE_BONUS = 40;
+    private final int CORNER_CAPTURE_BONUS = 20;
     private final Coord CENTER = Coordinates.get(4,4);
     private final List<Coord> CORNERS = Coordinates.getCorners();
     private final List<Coord> CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
@@ -34,7 +35,7 @@ public class StudentPlayer extends TablutPlayer {
     }
 
     private Move generateMuscoviteMove(TablutBoardState boardState) {
-        if (boardState.getTurnNumber() == 1) {
+        if (boardState.getTurnNumber() == 0) {
             return new TablutMove(4, 1, 3, 1, player_id);
         }
 
@@ -43,7 +44,7 @@ public class StudentPlayer extends TablutPlayer {
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         for (TablutMove legalMove : legalMoves) {
-            int moveValue = 0, numCaptures;
+            int moveValue = 0;
             TablutBoardState clonedBoardState = (TablutBoardState)boardState.clone();
             clonedBoardState.processMove(legalMove);
 
@@ -58,17 +59,14 @@ public class StudentPlayer extends TablutPlayer {
                 }
             }
             else {
-                // increase value if the king is far from the safety of the corners
-                // not sure if this makes a difference on M side as we cannot move the king
-                Coord kingCoord = clonedBoardState.getKingPosition();
-                moveValue += Coordinates.distanceToClosestCorner(kingCoord) * KING_DISTANCE_VALUE;
-
                 // increase value for each piece owned, decrease for each piece owned by opponent
-                moveValue += clonedBoardState.getNumberPlayerPieces(player_id) * PIECE_VALUE;
-                moveValue -= clonedBoardState.getNumberPlayerPieces(opponent) * PIECE_VALUE;
+                int numPlayerPieces = clonedBoardState.getNumberPlayerPieces(player_id);
+                int numOpponentPieces = clonedBoardState.getNumberPlayerPieces(opponent);
+                moveValue += numPlayerPieces * PIECE_VALUE;
+                moveValue -= numOpponentPieces * PIECE_VALUE;
 
                 // increase value for capturing opponent pieces
-                numCaptures = clonedBoardState.getNumberPlayerPieces(opponent) - boardState.getNumberPlayerPieces(opponent);
+                int numCaptures = numOpponentPieces - boardState.getNumberPlayerPieces(opponent);
                 moveValue += numCaptures * CAPTURE_VALUE;
 
                 // give additional incentive for captures at vulnerable positions
@@ -80,7 +78,7 @@ public class StudentPlayer extends TablutPlayer {
                         try {
                             sandwichCoord = Coordinates.getSandwichCoord(CENTER, centerNeighbor);
                             if (endPosition.equals(sandwichCoord)) {
-                                moveValue += VULNERABLE_CAPTURE_BONUS;
+                                moveValue += CENTER_CAPTURE_BONUS;
                             }
                         } catch (Exception ignored) {}
                     }
@@ -92,7 +90,7 @@ public class StudentPlayer extends TablutPlayer {
                             try {
                                 Coord sandwichCoord = Coordinates.getSandwichCoord(corner, cornerNeighbour);
                                 if (endPosition.equals(sandwichCoord)) {
-                                    moveValue += VULNERABLE_CAPTURE_BONUS;
+                                    moveValue += CORNER_CAPTURE_BONUS;
                                 }
                             } catch (Exception ignored) {}
                         }
