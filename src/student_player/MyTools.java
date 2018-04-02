@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import boardgame.Move;
+import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
 import tablut.TablutBoardState;
@@ -12,17 +13,20 @@ import tablut.TablutMove;
 class MyTools {
 
     // todo: bonus for moving the a piece into a position where it can attach the king
-    // todo: act differently if king is in castle
-        // may not be benefitial
+    // maybe: act differently if king is in castle
 
-
+    private boolean firstTurn;
     private final int player_id;
-    private final Coord CENTER = Coordinates.get(4, 4);
-    private final List<Coord> CORNERS = Coordinates.getCorners();
-    private final List<Coord> CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
+    private final Coord CENTER;
+    private final List<Coord> CORNERS;
+    private final List<Coord> CENTER_NEIGHBOURS ;
 
-    MyTools(int myPlayer) {
-        this.player_id = myPlayer;
+    MyTools(Player myPlayer) {
+        this.player_id = myPlayer.getColor();
+        firstTurn = true;
+        CENTER = Coordinates.get(4, 4);
+        CORNERS = Coordinates.getCorners();
+        CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
     }
 
     // evalutates a board from a muscovite player point of view
@@ -33,7 +37,7 @@ class MyTools {
         int pieceValue = 100;
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
-        double vulnerablePiecePenalty = 0.45;
+        double vulnerablePiecePenalty = 0.6;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -92,7 +96,7 @@ class MyTools {
                                TablutMove swedeMove) {
 
         int pieceValue = 400;
-        int kingDistanceValue = 10;
+        int kingDistanceValue = 20;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -109,7 +113,7 @@ class MyTools {
         if (finalOpponentPieces ==  initialOpponentPieces) {
             moveValue -= kingDistance * kingDistanceValue;
         } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            moveValue -=  0.9 * pieceValue;
+            moveValue -=  0.8 * pieceValue;
         }
 
         return moveValue;
@@ -121,7 +125,8 @@ class MyTools {
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // bait greedy opponents
-        if (boardState.getTurnNumber() == 1) {
+        if (firstTurn) {
+            firstTurn = false;
             return new TablutMove(4, 1, 3, 1, player_id);
         }
 
@@ -161,7 +166,8 @@ class MyTools {
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // bait greedy opponents
-        if (boardState.getTurnNumber() == 1) {
+        if (firstTurn) {
+            firstTurn = false;
             return new TablutMove(4, 5, 5, 5, player_id);
         }
 
