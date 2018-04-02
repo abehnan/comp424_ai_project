@@ -83,7 +83,6 @@ class MyTools {
 
         int pieceValue = 200;
         int kingDistanceValue = 5;
-//        int vulnerableKingPenalty = 5000;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = boardState.getNumberPlayerPieces(player_id);
@@ -92,11 +91,6 @@ class MyTools {
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
         moveValue -= numOpponentPieces * pieceValue;
-
-//        // decrease value heavily if we're putting our piece in peril
-//        if (isKingVulnerable(boardState)) {
-//            moveValue -= vulnerableKingPenalty;
-//        }
 
         int kingSafetyDistance = Coordinates.distanceToClosestCorner(boardState.getKingPosition());
 
@@ -197,93 +191,6 @@ class MyTools {
         Move myMove = getMaxMove(moveValues);
         return myMove == null ? boardState.getRandomMove() : myMove;
     }
-
-//    private boolean isKingVulnerable(TablutBoardState boardState) {
-//        Coord kingCoord = boardState.getKingPosition();
-//        TablutBoardState.Piece currentPiece = null;
-//        if (kingCoord.equals(Coordinates.get(0,1))) {
-//            for (int j = 2; j < 9; j++) {
-//                currentPiece = boardState.getPieceAt(0, j);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(1,0))) {
-//            for (int i = 2; i < 9; i++) {
-//                currentPiece = boardState.getPieceAt(i, 0);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(8,7))) {
-//            for (int j = 6; j > 0; j--) {
-//                currentPiece = boardState.getPieceAt(8, j);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(7,8))) {
-//            for (int i = 6; i > 0; i--) {
-//                currentPiece = boardState.getPieceAt(i, 8);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(0,7))) {
-//            for (int j = 6; j > 0; j--) {
-//                currentPiece = boardState.getPieceAt(0, j);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(7,0))) {
-//            for (int i = 6; i > 0; i--) {
-//                currentPiece = boardState.getPieceAt(i, 0);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(8,1))) {
-//            for (int j = 2; j < 9; j++) {
-//                currentPiece = boardState.getPieceAt(8, j);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        } else if (kingCoord.equals(Coordinates.get(1,8))) {
-//            for (int i = 2; i < 9; i++) {
-//                currentPiece = boardState.getPieceAt(i, 8);
-//                if (currentPiece == TablutBoardState.Piece.BLACK) {
-//                    return true;
-//                }
-//                else if (currentPiece == TablutBoardState.Piece.WHITE) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
     private Move getMaxMove(Map<TablutMove, Integer> moveValues) {
         Map.Entry<TablutMove, Integer> maxEntry = null;
