@@ -18,20 +18,13 @@ class MyTools {
     // done: discard move if we put our king in peril
     // todo: separate king move nad non king move for swedes
     // todo: act differently if king is in castle
+    // todo: lose occassionalyl against greedy M
 
 
     private final int player_id;
     private final Coord CENTER = Coordinates.get(4, 4);
     private final List<Coord> CORNERS = Coordinates.getCorners();
     private final List<Coord> CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
-    private final List<Coord> CASTLE = Arrays.asList(
-            Coordinates.get(4, 4),
-            Coordinates.get(4, 3),
-            Coordinates.get(3, 4),
-            Coordinates.get(4, 5),
-            Coordinates.get(5, 4)
-    );
-
 
     MyTools(int myPlayer) {
         this.player_id = myPlayer;
@@ -90,24 +83,22 @@ class MyTools {
 
     private int swedeEvalBoard(TablutBoardState initialBoardState, TablutBoardState finalBoardState) {
 
-        int pieceValue = 200;
-        int kingDistanceValue = 5;
+        int pieceValue = 100;
+        int kingDistanceValue = 10;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
-        int numOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
+        int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
+        int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
+        int kingDistance = Coordinates.distanceToClosestCorner(finalBoardState.getKingPosition());
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
-        moveValue -= numOpponentPieces * pieceValue;
+        moveValue -= finalOpponentPieces * pieceValue;
 
-        // give incentive for moving a king towards a corner
-        // give additional incentive is king is outside of castle
-        int kingDistanceToCorner = Coordinates.distanceToClosestCorner(finalBoardState.getKingPosition());
-        if (CASTLE.contains(initialBoardState.getKingPosition())) {
-            moveValue -= kingDistanceToCorner * kingDistanceValue;
-        } else {
-            moveValue -= kingDistanceToCorner * kingDistanceValue * 2;
+        // give incentive for moving king if we didn't capture any opponent pieces
+        if (finalOpponentPieces ==  initialOpponentPieces) {
+            moveValue -= kingDistance * kingDistanceValue;
         }
 
         return moveValue;
@@ -118,7 +109,7 @@ class MyTools {
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // bait greedy opponents
-        if (boardState.getTurnNumber() == 0) {
+        if (boardState.getTurnNumber() == 1) {
             return new TablutMove(4, 1, 3, 1, player_id);
         }
 
