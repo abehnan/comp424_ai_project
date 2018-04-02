@@ -11,12 +11,9 @@ import tablut.TablutMove;
 
 class MyTools {
 
-    // todo: add values for vulnerable positions. e.g. lose 1 point for every vulnerable piece
     // todo: bonus for moving the a piece into a position where it can attach the king
-    // todo: decrease value if we're sacrificing a piece
-    // todo: separate king move nad non king move for swedes
     // todo: act differently if king is in castle
-    // todo: lose occassionalyl against greedy M
+        // may not be benefitial
 
 
     private final int player_id;
@@ -36,19 +33,26 @@ class MyTools {
         int pieceValue = 100;
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
+        double vulnerablePiecePenalty = 0.5;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
-        int numOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
+        int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
+        int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
         Coord endCoord = muscoviteMove.getEndPosition();
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
-        moveValue -= numOpponentPieces * pieceValue;
+        moveValue -= finalOpponentPieces * pieceValue;
+
+        // if we didn't capture a piece then putting one of ours in peril is costly...
+        if (finalOpponentPieces == initialOpponentPieces) {
+            vulnerablePiecePenalty *= 2;
+        }
 
         // check if opponent will capture the moved piece on their next turn
         if (isPieceVulnerable(finalBoardState, muscoviteMove)) {
-            moveValue -= pieceValue / 2;
+            moveValue -= vulnerablePiecePenalty * pieceValue;
         }
 
         // give additional incentive for captures at vulnerable positions
@@ -100,14 +104,12 @@ class MyTools {
         moveValue += numPlayerPieces * pieceValue;
         moveValue -= finalOpponentPieces * pieceValue;
 
-        // check if opponent will capture the moved piece on their next turn
-        if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            moveValue -= pieceValue / 2;
-        }
-
         // give incentive for moving king if we didn't capture any opponent pieces
+        // if we're going for a capture, check to see if opponent will capture the piece we just moved
         if (finalOpponentPieces ==  initialOpponentPieces) {
             moveValue -= kingDistance * kingDistanceValue;
+        } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
+            moveValue -=  pieceValue;
         }
 
         return moveValue;
