@@ -283,6 +283,7 @@ class MyTools {
     }
 
     // returns the move with the highest value
+    // source : https://stackoverflow.com/a/5911199
     private Move getMaxMove(Map<TablutMove, Integer> moveValues) {
         Map.Entry<TablutMove, Integer> maxEntry = null;
         for (Map.Entry<TablutMove, Integer> entry : moveValues.entrySet()) {

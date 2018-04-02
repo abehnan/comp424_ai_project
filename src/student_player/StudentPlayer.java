@@ -56,8 +56,8 @@ public class StudentPlayer extends TablutPlayer {
 
 
 //            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
-//            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
-            Player muscovite = new StudentPlayer();
+            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
+//            Player muscovite = new StudentPlayer();
             muscovite.setColor(TablutBoardState.MUSCOVITE);
 
             Player player = muscovite;
@@ -95,6 +95,7 @@ public class StudentPlayer extends TablutPlayer {
     }
 
     // for debug purposes
+    // source : https://stackoverflow.com/a/10791597
     private static double calculateAverage(List<Integer> marks) {
         Integer sum = 0;
         if (!marks.isEmpty()) {
