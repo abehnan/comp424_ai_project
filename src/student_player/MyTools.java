@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import boardgame.Move;
 import coordinates.Coord;
 import coordinates.Coordinates;
+import tablut.TablutBoard;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -24,6 +25,13 @@ class MyTools {
     private final Coord CENTER = Coordinates.get(4, 4);
     private final List<Coord> CORNERS = Coordinates.getCorners();
     private final List<Coord> CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
+    private final List<Coord> CASTLE = Arrays.asList(
+            Coordinates.get(4, 4),
+            Coordinates.get(4, 3),
+            Coordinates.get(3, 4),
+            Coordinates.get(4, 5),
+            Coordinates.get(5, 4)
+    );
 
 
     MyTools(int myPlayer) {
@@ -81,71 +89,66 @@ class MyTools {
     }
 
 
-    private int swedeEvalBoard(TablutBoardState boardState) {
+    private int swedeEvalBoard(TablutBoardState initialBoardState, TablutBoardState finalBoardState) {
 
         int pieceValue = 200;
-        int kingDistanceValue = 4;
+        int kingDistanceValue = 5;
         int opponent = 1 - player_id;
         int moveValue = 0;
-        int numPlayerPieces = boardState.getNumberPlayerPieces(player_id);
-        int numOpponentPieces = boardState.getNumberPlayerPieces(opponent);
+        int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
+        int numOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
         moveValue -= numOpponentPieces * pieceValue;
 
         // give incentive for moving a king towards a corner
-        int kingDistanceToCorner = Coordinates.distanceToClosestCorner(boardState.getKingPosition());
-        moveValue -= kingDistanceToCorner * kingDistanceValue;
+        // give additional incentive is king is outside of castle
+        int kingDistanceToCorner = Coordinates.distanceToClosestCorner(finalBoardState.getKingPosition());
+        if (CASTLE.contains(initialBoardState.getKingPosition())) {
+            moveValue -= kingDistanceToCorner * kingDistanceValue;
+        } else {
+            moveValue -= kingDistanceToCorner * kingDistanceValue * 2;
+        }
 
         return moveValue;
     }
 
     Move generateMuscoviteMove(TablutBoardState boardState) {
+
+        Map<TablutMove, Integer> moveValues = new HashMap<>();
+
         // bait greedy opponents
         if (boardState.getTurnNumber() == 0) {
             return new TablutMove(4, 1, 3, 1, player_id);
         }
 
-        Map<TablutMove, Integer> moveValues = new HashMap<>();
-
         // go through player's legal moves
+        outerLoop:
         for (TablutMove playerMove : boardState.getAllLegalMoves()) {
-            int moveValue = 0;
             TablutBoardState clonedBoardState = (TablutBoardState) boardState.clone();
             clonedBoardState.processMove(playerMove);
 
             // check for win conditions
-            if (clonedBoardState.gameOver()) {
-                if (clonedBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
-                    moveValue = Integer.MAX_VALUE;
-                } else if (clonedBoardState.getWinner() == TablutBoardState.SWEDE) {
-                    moveValue = Integer.MIN_VALUE;
-                }
+            if (clonedBoardState.gameOver() && clonedBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
+                return playerMove;
+            }
 
-                moveValues.put(playerMove, moveValue);
-            } else {
-                // go through opponent's moves on following turn
-                for (TablutMove opponentMove : clonedBoardState.getAllLegalMoves()) {
-                    TablutBoardState nextBoardState = (TablutBoardState) clonedBoardState.clone();
-                    nextBoardState.processMove(opponentMove);
+            // go through opponent's moves on following turn
+            for (TablutMove opponentMove : clonedBoardState.getAllLegalMoves()) {
+                TablutBoardState nextBoardState = (TablutBoardState) clonedBoardState.clone();
+                nextBoardState.processMove(opponentMove);
 
-                    // check for opponent win condition
-                    if (nextBoardState.gameOver()) {
-                        if (nextBoardState.getWinner() == TablutBoardState.SWEDE) {
-                            moveValue = Integer.MIN_VALUE + 1;
-                            break;
-                        }
-                    }
-                }
-                if (moveValue == Integer.MIN_VALUE + 1) {
-                    moveValues.put(playerMove, moveValue);
-                } else {
-                    moveValue = muscoviteEvalBoard(boardState, clonedBoardState, playerMove);
-                    moveValues.put(playerMove, moveValue);
+                // check for opponent win condition
+                if (nextBoardState.gameOver() && nextBoardState.getWinner() == TablutBoardState.SWEDE) {
+                    continue outerLoop;
                 }
             }
+            
+            int moveValue = muscoviteEvalBoard(boardState, clonedBoardState, playerMove);
+            moveValues.put(playerMove, moveValue);
         }
+
         Move myMove = getMaxMove(moveValues);
         return myMove == null ? boardState.getRandomMove() : myMove;
     }
@@ -155,42 +158,31 @@ class MyTools {
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // go through player's legal moves
+        outerLoop:
         for (TablutMove playerMove : boardState.getAllLegalMoves()) {
-            int moveValue = 0;
             TablutBoardState clonedBoardState = (TablutBoardState) boardState.clone();
             clonedBoardState.processMove(playerMove);
 
             // check for win conditions
-            if (clonedBoardState.gameOver()) {
-                if (clonedBoardState.getWinner() == TablutBoardState.SWEDE) {
-                    moveValue = Integer.MAX_VALUE;
-                } else if (clonedBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
-                    moveValue = Integer.MIN_VALUE;
-                }
+            if (clonedBoardState.gameOver() && clonedBoardState.getWinner() == TablutBoardState.SWEDE) {
+                return playerMove;
+            }
 
-                moveValues.put(playerMove, moveValue);
-            } else {
-                // go through opponent's moves on following turn
-                for (TablutMove opponentMove : clonedBoardState.getAllLegalMoves()) {
-                    TablutBoardState nextBoardState = (TablutBoardState) clonedBoardState.clone();
-                    nextBoardState.processMove(opponentMove);
+            // go through opponent's moves on following turn
+            for (TablutMove opponentMove : clonedBoardState.getAllLegalMoves()) {
+                TablutBoardState nextBoardState = (TablutBoardState) clonedBoardState.clone();
+                nextBoardState.processMove(opponentMove);
 
-                    // check for opponent win condition
-                    if (nextBoardState.gameOver()) {
-                        if (nextBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
-                            moveValue = Integer.MIN_VALUE + 1;
-                            break;
-                        }
-                    }
-                }
-                if (moveValue == Integer.MIN_VALUE + 1) {
-                    moveValues.put(playerMove, moveValue);
-                } else {
-                    moveValue = swedeEvalBoard(clonedBoardState);
-                    moveValues.put(playerMove, moveValue);
+                // check for opponent win condition
+                if (nextBoardState.gameOver() && nextBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
+                    continue outerLoop;
                 }
             }
+
+            int moveValue = swedeEvalBoard(boardState, clonedBoardState);
+            moveValues.put(playerMove, moveValue);
         }
+
         Move myMove = getMaxMove(moveValues);
         return myMove == null ? boardState.getRandomMove() : myMove;
     }
