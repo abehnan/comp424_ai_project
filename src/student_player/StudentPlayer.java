@@ -55,9 +55,9 @@ public class StudentPlayer extends TablutPlayer {
             swede.setColor(TablutBoardState.SWEDE);
 
 
-            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
+//            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
 //            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
-//            Player muscovite = new StudentPlayer();
+            Player muscovite = new StudentPlayer();
             muscovite.setColor(TablutBoardState.MUSCOVITE);
 
             Player player = muscovite;

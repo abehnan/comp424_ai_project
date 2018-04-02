@@ -16,13 +16,14 @@ class MyTools {
     // maybe: act differently if king is in castle
 
     private boolean firstTurn;
-    private final int player_id;
+    private final Player myPlayer;
     private final Coord CENTER;
     private final List<Coord> CORNERS;
     private final List<Coord> CENTER_NEIGHBOURS ;
 
     MyTools(Player myPlayer) {
-        this.player_id = myPlayer.getColor();
+//        this.player_id = myPlayer.getColor();
+        this.myPlayer = myPlayer;
         firstTurn = true;
         CENTER = Coordinates.get(4, 4);
         CORNERS = Coordinates.getCorners();
@@ -38,6 +39,7 @@ class MyTools {
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
         double vulnerablePiecePenalty = 0.6;
+        int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -97,6 +99,7 @@ class MyTools {
 
         int pieceValue = 400;
         int kingDistanceValue = 20;
+        int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -122,6 +125,7 @@ class MyTools {
     // generates a move for a muscovite player
     Move generateMuscoviteMove(TablutBoardState boardState) {
 
+        int player_id = myPlayer.getColor();
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // bait greedy opponents
@@ -163,6 +167,7 @@ class MyTools {
     // generates a move for a swede player
     Move generateSwedeMove(TablutBoardState boardState) {
 
+        int player_id = myPlayer.getColor();
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // bait greedy opponents
@@ -204,6 +209,7 @@ class MyTools {
     // returns true if the opponent is able to capture the piece on the following turn
     private boolean isPieceVulnerable(TablutBoardState boardState, TablutMove playerMove) {
 
+        int player_id = myPlayer.getColor();
         Coord pieceCoord = playerMove.getEndPosition();
         List<Coord> neighbours = Coordinates.getNeighbors(pieceCoord);
         TablutBoardState.Piece playerPieceType;
