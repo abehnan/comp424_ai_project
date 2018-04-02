@@ -33,7 +33,7 @@ class MyTools {
         int pieceValue = 100;
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
-        double vulnerablePiecePenalty = 0.5;
+        double vulnerablePiecePenalty = 0.45;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -109,7 +109,7 @@ class MyTools {
         if (finalOpponentPieces ==  initialOpponentPieces) {
             moveValue -= kingDistance * kingDistanceValue;
         } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            moveValue -=  pieceValue;
+            moveValue -=  0.9 * pieceValue;
         }
 
         return moveValue;
