@@ -13,9 +13,7 @@ class MyTools {
 
     // todo: add values for vulnerable positions. e.g. lose 1 point for every vulnerable piece
     // todo: bonus for moving the a piece into a position where it can attach the king
-    // done: make sure bonus for king distance gives value based on distance improvement on swede turn
     // todo: decrease value if we're sacrificing a piece
-    // done: discard move if we put our king in peril
     // todo: separate king move nad non king move for swedes
     // todo: act differently if king is in castle
     // todo: lose occassionalyl against greedy M
@@ -34,9 +32,9 @@ class MyTools {
                                    TablutBoardState finalBoardState,
                                    TablutMove muscoviteMove) {
 
-        int PIECE_VALUE = 100;
-        int CORNER_CAPTURE_BONUS = 200;
-        int CENTER_CAPTURE_BONUS = 500;
+        int pieceValue = 100;
+        int cornerCaptureBonus = 200;
+        int centerCaptureBonus = 500;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
@@ -44,8 +42,8 @@ class MyTools {
         Coord endPosition = muscoviteMove.getEndPosition();
 
         // increase value for each piece owned, decrease for each piece owned by opponent
-        moveValue += numPlayerPieces * PIECE_VALUE;
-        moveValue -= numOpponentPieces * PIECE_VALUE;
+        moveValue += numPlayerPieces * pieceValue;
+        moveValue -= numOpponentPieces * pieceValue;
 
         // give additional incentive for captures at vulnerable positions
         // encourages AI to be more aggressive
@@ -55,7 +53,7 @@ class MyTools {
                     try {
                         Coord sandwichCoord = Coordinates.getSandwichCoord(CENTER, centerNeighbor);
                         if (endPosition.equals(sandwichCoord)) {
-                            moveValue += CENTER_CAPTURE_BONUS;
+                            moveValue += centerCaptureBonus;
                         }
                     } catch (Exception ignored) {
                     }
@@ -70,7 +68,7 @@ class MyTools {
                         Coord sandwichCoord = Coordinates.getSandwichCoord(corner, cornerNeighbour);
                         if (endPosition.equals(sandwichCoord)) {
 
-                            moveValue += CORNER_CAPTURE_BONUS;
+                            moveValue += cornerCaptureBonus;
                         }
                     } catch (Exception ignored) {
                     }
