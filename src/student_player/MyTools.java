@@ -47,7 +47,7 @@ class MyTools {
         moveValue -= numOpponentPieces * pieceValue;
 
         // check if opponent will capture the moved piece on their next turn
-        if (isPieceVulnerable(finalBoardState, endCoord)) {
+        if (isPieceVulnerable(finalBoardState, muscoviteMove)) {
             moveValue -= pieceValue / 2;
         }
 
@@ -95,14 +95,13 @@ class MyTools {
         int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
         int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
         int kingDistance = Coordinates.distanceToClosestCorner(finalBoardState.getKingPosition());
-        Coord endCoord = swedeMove.getEndPosition();
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
         moveValue -= finalOpponentPieces * pieceValue;
 
         // check if opponent will capture the moved piece on their next turn
-        if (isPieceVulnerable(finalBoardState, endCoord)) {
+        if (isPieceVulnerable(finalBoardState, swedeMove)) {
             moveValue -= pieceValue / 2;
         }
 
@@ -195,8 +194,9 @@ class MyTools {
     }
 
     // returns true if the opponent is able to capture the piece on the following turn
-    private boolean isPieceVulnerable(TablutBoardState boardState, Coord pieceCoord) {
+    private boolean isPieceVulnerable(TablutBoardState boardState, TablutMove playerMove) {
 
+        Coord pieceCoord = playerMove.getEndPosition();
         List<Coord> neighbours = Coordinates.getNeighbors(pieceCoord);
         TablutBoardState.Piece playerPieceType;
         TablutBoardState.Piece opponentPieceType;
