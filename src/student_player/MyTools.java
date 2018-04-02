@@ -6,7 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import boardgame.Move;
 import coordinates.Coord;
 import coordinates.Coordinates;
-import tablut.TablutBoard;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -144,7 +143,7 @@ class MyTools {
                     continue outerLoop;
                 }
             }
-            
+
             int moveValue = muscoviteEvalBoard(boardState, clonedBoardState, playerMove);
             moveValues.put(playerMove, moveValue);
         }
@@ -156,6 +155,11 @@ class MyTools {
     Move generateSwedeMove(TablutBoardState boardState) {
 
         Map<TablutMove, Integer> moveValues = new HashMap<>();
+
+        // bait greedy opponents
+        if (boardState.getTurnNumber() == 1) {
+            return new TablutMove(4, 5, 5, 5, player_id);
+        }
 
         // go through player's legal moves
         outerLoop:
