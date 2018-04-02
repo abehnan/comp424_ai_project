@@ -6,7 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import boardgame.Move;
 import coordinates.Coord;
 import coordinates.Coordinates;
-import javafx.scene.control.Tab;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -14,10 +13,13 @@ class MyTools {
 
     // todo: add values for vulnerable positions. e.g. lose 1 point for every vulnerable piece
     // todo: bonus for moving the a piece into a position where it can attach the king
-    // todo: make sure bonus for king distance gives value based on distance improvement on swede turn
+    // done: make sure bonus for king distance gives value based on distance improvement on swede turn
     // todo: decrease value if we're sacrificing a piece
-    // todo: discard move if we put our king in peril
-    // todo: seperate king move nad non king move for swedes
+    // done: discard move if we put our king in peril
+    // todo: separate king move nad non king move for swedes
+    // todo: act differently if king is in castle
+
+
     private final int player_id;
     private final Coord CENTER = Coordinates.get(4, 4);
     private final List<Coord> CORNERS = Coordinates.getCorners();
