@@ -84,7 +84,7 @@ class MyTools {
     private int swedeEvalBoard(TablutBoardState boardState) {
 
         int pieceValue = 200;
-        int kingDistanceValue = 5;
+        int kingDistanceValue = 4;
         int opponent = 1 - player_id;
         int moveValue = 0;
         int numPlayerPieces = boardState.getNumberPlayerPieces(player_id);
