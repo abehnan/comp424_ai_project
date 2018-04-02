@@ -94,9 +94,10 @@ class MyTools {
         moveValue += numPlayerPieces * pieceValue;
         moveValue -= numOpponentPieces * pieceValue;
 
-        int kingSafetyDistance = Coordinates.distanceToClosestCorner(boardState.getKingPosition());
+        // give incentive for moving a king towards a corner
+        int kingDistanceToCorner = Coordinates.distanceToClosestCorner(boardState.getKingPosition());
+        moveValue -= kingDistanceToCorner * kingDistanceValue;
 
-        moveValue -= kingSafetyDistance * kingDistanceValue;
         return moveValue;
     }
 
