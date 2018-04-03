@@ -21,6 +21,7 @@ class MyTools {
     private final List<Coord> CORNERS;
     private final List<Coord> CENTER_NEIGHBOURS;
 
+    // constructor
     MyTools(Player myPlayer) {
         this.myPlayer = myPlayer;
         firstTurn = true;
@@ -29,7 +30,7 @@ class MyTools {
         CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
     }
 
-    // generates a move for a muscovite player
+    // generates a move
     Move getMove(TablutBoardState boardState) {
 
         Map<TablutMove, Double> moveValues1 = new HashMap<>();
@@ -67,7 +68,7 @@ class MyTools {
                 for (TablutMove playerMove2 : boardState2.getAllLegalMoves()) {
                     TablutBoardState boardState3 = (TablutBoardState) boardState2.clone();
                     boardState3.processMove(playerMove2);
-                    moveValues2.add(evalBoard(boardState2, boardState3, playerMove2));
+                    moveValues2.add(evalMove(boardState2, boardState3, playerMove2));
                 }
             }
             moveValues1.put(playerMove1, calculateAverageDouble(moveValues2));
@@ -77,21 +78,22 @@ class MyTools {
         return myMove == null ? boardState.getRandomMove() : myMove;
     }
 
-    private Double evalBoard(TablutBoardState initialBoardState,
-                             TablutBoardState finalBoardState,
-                             TablutMove playerMove) {
+    // evaluates the value of a move using the appropriate heuristic
+    private Double evalMove(TablutBoardState initialBoardState,
+                            TablutBoardState finalBoardState,
+                            TablutMove playerMove) {
         if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
-            return muscEvalBoard(initialBoardState, finalBoardState, playerMove);
+            return muscEvalMove(initialBoardState, finalBoardState, playerMove);
         } else if (myPlayer.getColor() == TablutBoardState.SWEDE) {
-            return swedeEvalBoard(initialBoardState, finalBoardState, playerMove);
+            return swedeEvalMove(initialBoardState, finalBoardState, playerMove);
         }
         return null;
     }
 
-    // evaluates a board from a muscovite player point of view
-    private Double muscEvalBoard(TablutBoardState initialBoardState,
-                                 TablutBoardState finalBoardState,
-                                 TablutMove muscoviteMove) {
+    // evaluates a muscovites player's move
+    private Double muscEvalMove(TablutBoardState initialBoardState,
+                                TablutBoardState finalBoardState,
+                                TablutMove muscoviteMove) {
 
         int pieceValue = 100;
         double cornerCaptureBonus = 200;
@@ -162,10 +164,10 @@ class MyTools {
         return moveValue;
     }
 
-    // evaluates a board from a swede player's point of view
-    private Double swedeEvalBoard(TablutBoardState initialBoardState,
-                                  TablutBoardState finalBoardState,
-                                  TablutMove swedeMove) {
+    // evaluates a swede player's move
+    private Double swedeEvalMove(TablutBoardState initialBoardState,
+                                 TablutBoardState finalBoardState,
+                                 TablutMove swedeMove) {
 
         double pieceValue = 400;
         double kingDistanceValue = 100;
