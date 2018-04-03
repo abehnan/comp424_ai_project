@@ -20,7 +20,6 @@ class MyTools {
     private final Coord CENTER;
     private final List<Coord> CORNERS;
     private final List<Coord> CENTER_NEIGHBOURS ;
-    private final List<Coord> CASTLE;
 
     MyTools(Player myPlayer) {
 //        this.player_id = myPlayer.getColor();
@@ -29,16 +28,10 @@ class MyTools {
         CENTER = Coordinates.get(4, 4);
         CORNERS = Coordinates.getCorners();
         CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
-        CASTLE = new ArrayList<>();
-        CASTLE.add(Coordinates.get(4,4));
-        CASTLE.add(Coordinates.get(4,3));
-        CASTLE.add(Coordinates.get(3,4));
-        CASTLE.add(Coordinates.get(4,5));
-        CASTLE.add(Coordinates.get(5,4));
     }
 
 
-    // evalutates a board from a muscovite player point of view
+    // evaluates a board from a muscovite player point of view
     private int muscoviteEvalBoard(TablutBoardState initialBoardState,
                                    TablutBoardState finalBoardState,
                                    TablutMove muscoviteMove) {
@@ -46,7 +39,7 @@ class MyTools {
         int pieceValue = 100;
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
-        int kingDistanceValue = 100;
+        int kingDistanceValue = 20;
         double vulnerablePiecePenalty = 0.6;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
@@ -66,12 +59,7 @@ class MyTools {
             vulnerablePiecePenalty *= 2;
 
             // increase value if we moved our piece towards the king
-            Coord kingCoord = finalBoardState.getKingPosition();
-            if (CASTLE.contains(kingCoord)) {
-                moveValue -= endCoord.distance(finalBoardState.getKingPosition()) * kingDistanceValue;
-            } else {
-                moveValue -= endCoord.distance(finalBoardState.getKingPosition()) * kingDistanceValue * 2;
-            }
+            moveValue -= endCoord.distance(finalBoardState.getKingPosition()) * kingDistanceValue;
         }
 
         // check if opponent will capture the moved piece on their next turn
@@ -185,7 +173,6 @@ class MyTools {
     // generates a move for a swede player
     Move generateSwedeMove(TablutBoardState boardState) {
 
-        int player_id = myPlayer.getColor();
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
         // go through player's legal moves
