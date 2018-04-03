@@ -19,7 +19,7 @@ class MyTools {
     private final Player myPlayer;
     private final Coord CENTER;
     private final List<Coord> CORNERS;
-    private final List<Coord> CENTER_NEIGHBOURS ;
+    private final List<Coord> CENTER_NEIGHBOURS;
 
     MyTools(Player myPlayer) {
         this.myPlayer = myPlayer;
@@ -38,7 +38,7 @@ class MyTools {
         // bait greedy opponents
         if (playerColor == TablutBoardState.MUSCOVITE && firstTurn) {
             firstTurn = false;
-            return new TablutMove(4, 1, 3, 1,  myPlayer.getColor());
+            return new TablutMove(4, 1, 3, 1, myPlayer.getColor());
         }
 
         // go through all player's moves
@@ -140,7 +140,8 @@ class MyTools {
                         if (endCoord.equals(sandwichCoord)) {
                             moveValue += centerCaptureBonus;
                         }
-                    } catch (Exception ignored) { }
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
@@ -154,7 +155,8 @@ class MyTools {
 
                             moveValue += cornerCaptureBonus;
                         }
-                    } catch (Exception ignored) { }
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
@@ -179,7 +181,13 @@ class MyTools {
         // check for win conditions
         if (finalBoardState.gameOver() && finalBoardState.getWinner() == TablutBoardState.SWEDE) {
             moveValue += 5000;
+        } else if (!initialBoardState.getKingPosition().equals(finalBoardState.getKingPosition())) {
+            // check if we put our king in peril
+            if (isPieceVulnerable(finalBoardState, swedeMove)) {
+                moveValue -= 5000;
+            }
         }
+
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
@@ -187,15 +195,12 @@ class MyTools {
 
         // give incentive for moving king if we didn't capture any opponent pieces
         // if we're going for a capture, check to see if opponent will capture the piece we just moved
-        if (finalOpponentPieces ==  initialOpponentPieces) {
+        if (finalOpponentPieces == initialOpponentPieces) {
             moveValue -= kingDistance * kingDistanceValue;
         } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            if (!initialBoardState.getKingPosition().equals(finalBoardState.getKingPosition())) {
-                moveValue -= 5000;
-            } else {
-                moveValue -= pieceValue;
-            }
+            moveValue -= pieceValue;
         }
+
 
         return moveValue;
     }
@@ -224,7 +229,8 @@ class MyTools {
                 Coord sandwichCoord = null;
                 try {
                     sandwichCoord = Coordinates.getSandwichCoord(pieceCoord, neighbour);
-                } catch (Exception ignored) { }
+                } catch (Exception ignored) {
+                }
                 if (sandwichCoord != null) {
                     // if sandwichCoord is on the same row
                     if (neighbour.x == pieceCoord.x) {
@@ -248,7 +254,7 @@ class MyTools {
                                 }
                             }
                         }
-                    // if sandwichCoord is on the same column
+                        // if sandwichCoord is on the same column
                     } else if (neighbour.y == pieceCoord.y) {
                         if (neighbour.x < pieceCoord.x) {
                             for (int i = sandwichCoord.y; i < 9; i++) {
