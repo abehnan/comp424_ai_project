@@ -1,0 +1,23 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					SWEDE TEST COMPLETE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+average number of turns: 13.487333333333334
+1500 games
+format: WINS/DRAWS/LOSSES
+total score: 1422/6/72
+500/0/0 vs. random player (100.0% win rate)
+495/0/5 vs. greedy player (99.0% win rate)
+427/6/67 vs. student player (85.39999999999999% win rate)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				MUSCOVITE TEST COMPLETE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+average number of turns: 9.715333333333334
+1500 games
+format: WINS/DRAWS/LOSSES
+total score: 1058/16/426
+500/0/0 vs. random player (100.0% win rate)
+500/0/0 vs. greedy player (100.0% win rate)
+58/16/426 vs. student player (11.600000000000001% win rate)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
