@@ -30,13 +30,13 @@ class MyTools {
     }
 
     // generates a move for a muscovite player
-    Move getMove(TablutBoardState boardState, int playerColor) {
+    Move getMove(TablutBoardState boardState) {
 
         Map<TablutMove, Double> moveValues1 = new HashMap<>();
-        int opponentColor = 1 - playerColor;
+        int opponentColor = 1 - myPlayer.getColor();
 
         // bait greedy opponents
-        if (playerColor == TablutBoardState.MUSCOVITE && firstTurn) {
+        if (myPlayer.getColor() == TablutBoardState.MUSCOVITE && firstTurn) {
             firstTurn = false;
             return new TablutMove(4, 1, 3, 1, myPlayer.getColor());
         }
@@ -48,7 +48,7 @@ class MyTools {
             boardState1.processMove(playerMove1);
 
             // check for win conditions
-            if (boardState1.gameOver() && boardState1.getWinner() == playerColor) {
+            if (boardState1.gameOver() && boardState1.getWinner() == myPlayer.getColor()) {
                 return playerMove1;
             }
 
@@ -67,7 +67,7 @@ class MyTools {
                 for (TablutMove playerMove2 : boardState2.getAllLegalMoves()) {
                     TablutBoardState boardState3 = (TablutBoardState) boardState2.clone();
                     boardState3.processMove(playerMove2);
-                    moveValues2.add(evalBoard(boardState2, boardState3, playerMove2, playerColor));
+                    moveValues2.add(evalBoard(boardState2, boardState3, playerMove2));
                 }
             }
             moveValues1.put(playerMove1, calculateAverageDouble(moveValues2));
@@ -79,11 +79,10 @@ class MyTools {
 
     private Double evalBoard(TablutBoardState initialBoardState,
                              TablutBoardState finalBoardState,
-                             TablutMove playerMove,
-                             int playerColor) {
-        if (playerColor == TablutBoardState.MUSCOVITE) {
+                             TablutMove playerMove) {
+        if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
             return muscEvalBoard(initialBoardState, finalBoardState, playerMove);
-        } else if (playerColor == TablutBoardState.SWEDE) {
+        } else if (myPlayer.getColor() == TablutBoardState.SWEDE) {
             return swedeEvalBoard(initialBoardState, finalBoardState, playerMove);
         }
         return null;

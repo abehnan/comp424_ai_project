@@ -16,6 +16,6 @@ public class StudentPlayer extends TablutPlayer {
     }
 
     public Move chooseMove(TablutBoardState boardState) {
-        return myTools.getMove(boardState, player_id);
+        return myTools.getMove(boardState);
     }
 }
