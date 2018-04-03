@@ -21,7 +21,7 @@ public class MyTestSuite {
     }
 
     private static void muscoviteTest() {
-        int numGames = 1500;
+        int numGames = 150;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -37,10 +37,12 @@ public class MyTestSuite {
         List<Integer> turnCounts = new ArrayList<>();
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\t\t\t\tSTARTING MUSCOVITE TEST");
+        System.out.println("            STARTING MUSCOVITE TEST");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < numGames; i++) {
+
             TablutBoardState b = new TablutBoardState();
 
             Player muscovite = new StudentPlayer();
@@ -49,14 +51,18 @@ public class MyTestSuite {
             Player swede;
             if (i < numGames / 3) {
                 swede = new RandomTablutPlayer("RandomSwede");
+//                continue;
             } else if (i < 2 * numGames / 3) {
                 swede = new GreedyTablutPlayer("GreedySwede");
+//                continue;
             } else {
                 swede = new StudentPlayer();
+//                continue;
             }
             swede.setColor(TablutBoardState.SWEDE);
             Player player = muscovite;
 
+            System.out.print("Game: " + i + "...");
             while (!b.gameOver()) {
                 Move m = player.chooseMove(b);
                 b.processMove((TablutMove) m);
@@ -73,7 +79,7 @@ public class MyTestSuite {
                     studentLosses++;
                 }
                 totalLosses++;
-                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
+                System.out.println("LOSS in " + b.getTurnNumber() + " turns.");
             } else if (b.getWinner() == TablutBoardState.MUSCOVITE) {
                 if (i < numGames / 3) {
                     randomWins++;
@@ -83,7 +89,7 @@ public class MyTestSuite {
                     studentWins++;
                 }
                 totalWins++;
-                System.out.println("Game: " + i + " WIN in " + b.getTurnNumber() + " turns.");
+                System.out.println("WIN in " + b.getTurnNumber() + " turns.");
             } else {
                 if (i < numGames / 3) {
                     randomDraws++;
@@ -93,14 +99,15 @@ public class MyTestSuite {
                     studentDraws++;
                 }
                 totalDraws++;
-                System.out.println("Game: " + i + " DRAW in " + b.getTurnNumber() + " turns.");
+                System.out.println("DRAW in " + b.getTurnNumber() + " turns.");
             }
         }
+        long totalTime = System.currentTimeMillis() - startTime;
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\t\t\t\tMUSCOVITE TEST COMPLETE");
+        System.out.println("            MUSCOVITE TEST COMPLETE");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("average number of turns: " + calculateAverage(turnCounts));
+        System.out.println("average number of turns: " + MyTools.calculateAverageInteger(turnCounts));
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
@@ -111,11 +118,12 @@ public class MyTestSuite {
         System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" +
                 (double)studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("\n\n time taken: " + totalTime);
     }
 
 
     private static void swedeTest() {
-        int numGames = 1500;
+        int numGames = 150;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -131,10 +139,12 @@ public class MyTestSuite {
         List<Integer> turnCounts = new ArrayList<>();
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\t\t\t\t\tSTARTING SWEDE TEST");
+        System.out.println("                    STARTING SWEDE TEST");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < numGames; i++) {
+
             TablutBoardState b = new TablutBoardState();
 
             Player swede = new StudentPlayer();
@@ -143,14 +153,18 @@ public class MyTestSuite {
             Player muscovite;
             if (i < numGames / 3) {
                 muscovite = new RandomTablutPlayer("RandomMuscovite");
+//                continue;
             } else if (i < 2 * numGames / 3) {
                 muscovite = new GreedyTablutPlayer("GreedyMuscovite");
+//                continue;
             } else {
                 muscovite = new StudentPlayer();
+//                continue;
             }
             muscovite.setColor(TablutBoardState.MUSCOVITE);
             Player player = muscovite;
 
+            System.out.print("Game: " + i + "...");
             while (!b.gameOver()) {
                 Move m = player.chooseMove(b);
                 b.processMove((TablutMove) m);
@@ -167,7 +181,7 @@ public class MyTestSuite {
                     studentLosses++;
                 }
                 totalLosses++;
-                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
+                System.out.println("LOSS in " + b.getTurnNumber() + " turns.");
             } else if (b.getWinner() == TablutBoardState.SWEDE) {
                 if (i < numGames / 3) {
                     randomWins++;
@@ -177,7 +191,7 @@ public class MyTestSuite {
                     studentWins++;
                 }
                 totalWins++;
-                System.out.println("Game: " + i + " WIN in " + b.getTurnNumber() + " turns.");
+                System.out.println("WIN in " + b.getTurnNumber() + " turns.");
             } else {
                 if (i < numGames / 3) {
                     randomDraws++;
@@ -187,15 +201,16 @@ public class MyTestSuite {
                     studentDraws++;
                 }
                 totalDraws++;
-                System.out.println("Game: " + i + " DRAW in " + b.getTurnNumber() + " turns.");
+                System.out.println("DRAW in " + b.getTurnNumber() + " turns.");
             }
         }
+        long totalTime = System.currentTimeMillis() - startTime;
 
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("\t\t\t\t\tSWEDE TEST COMPLETE");
+        System.out.println("                    SWEDE TEST COMPLETE");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("average number of turns: " + calculateAverage(turnCounts));
+        System.out.println("average number of turns: " + MyTools.calculateAverageInteger(turnCounts));
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
@@ -206,19 +221,9 @@ public class MyTestSuite {
         System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" +
                 (double)studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("\n\n time taken: " + totalTime);
     }
 
-    // for debug purposes
-    // source : https://stackoverflow.com/a/10791597
-    public static double calculateAverage(List<Integer> marks) {
-        Integer sum = 0;
-        if (!marks.isEmpty()) {
-            for (Integer mark : marks) {
-                sum += mark;
-            }
-            return sum.doubleValue() / marks.size();
-        }
-        return sum;
-    }
+
 
 }
