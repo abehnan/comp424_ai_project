@@ -17,7 +17,7 @@ import tablut.TablutPlayer;
  */
 public class StudentPlayer extends TablutPlayer {
 
-    private MyTools myTools;
+    private MyTools myTools = new MyTools(this);
     private boolean setup = true;
 
     public StudentPlayer() {
@@ -25,10 +25,10 @@ public class StudentPlayer extends TablutPlayer {
     }
 
     public Move chooseMove(TablutBoardState boardState) {
-        if (setup) {
-            setup = false;
-            myTools = new MyTools(this);
-        }
+//        if (setup) {
+//            setup = false;
+//            myTools = new MyTools(this);
+//        }
         if (player_id == TablutBoardState.MUSCOVITE) {
             return myTools.generateMuscoviteMove(boardState);
         } else {
@@ -56,8 +56,8 @@ public class StudentPlayer extends TablutPlayer {
 
 
 //            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
-            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
-//            Player muscovite = new StudentPlayer();
+//            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
+            Player muscovite = new StudentPlayer();
             muscovite.setColor(TablutBoardState.MUSCOVITE);
 
             Player player = muscovite;
@@ -67,18 +67,18 @@ public class StudentPlayer extends TablutPlayer {
                 player = (player == muscovite) ? swede : muscovite;
             }
             turnCounts.add(b.getTurnNumber());
-            System.out.println(
-                    "Game: " + i + " winner: " +
-                            TablutMove.getPlayerName(b.getWinner()) + " in " + b.getTurnNumber() + " turns.");
-            if (b.getWinner() == swede.getColor()) {
+            String winnerName = "invalid";
+            if (b.getWinner() == TablutBoardState.SWEDE) {
                 swedeWins++;
-            }
-            if (b.getWinner() == muscovite.getColor()) {
+                winnerName = "Swedes";
+            } else if (b.getWinner() == TablutBoardState.MUSCOVITE) {
                 muscoviteWins++;
-            }
-            if (b.getTurnNumber() == Board.NOBODY) {
+                winnerName = "Muscovites";
+            } else if (b.getWinner() == Board.DRAW) {
                 numDraws++;
+                winnerName = "Draw";
             }
+            System.out.println("Game: " + i + " winner: " + winnerName + " in " + b.getTurnNumber() + " turns.");
         }
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println(numGames + " games");

@@ -170,12 +170,6 @@ class MyTools {
         int player_id = myPlayer.getColor();
         Map<TablutMove, Integer> moveValues = new HashMap<>();
 
-        // bait greedy opponents
-        if (firstTurn) {
-            firstTurn = false;
-            return new TablutMove(4, 5, 5, 5, player_id);
-        }
-
         // go through player's legal moves
         outerLoop:
         for (TablutMove playerMove : boardState.getAllLegalMoves()) {
