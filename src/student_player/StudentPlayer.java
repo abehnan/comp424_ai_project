@@ -82,24 +82,11 @@ public class StudentPlayer extends TablutPlayer {
         double swedeWinRate = (double) swedeWins / numGames * 100;
         double drawRate = (double) numDraws / numGames * 100;
         double muscoviteWinRate = (double) muscoviteWins / numGames * 100;
-        System.out.println("average number of turns: " + StudentPlayer.calculateAverage(turnCounts));
+        System.out.println("average number of turns: " + MyTestSuite.calculateAverage(turnCounts));
         System.out.println("swede win rate: " + swedeWinRate + "%");
         System.out.println("muscovite win rate: " + muscoviteWinRate + "%");
         System.out.println("draw rate: " + drawRate + "%");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-    }
-
-    // for debug purposes
-    // source : https://stackoverflow.com/a/10791597
-    private static double calculateAverage(List<Integer> marks) {
-        Integer sum = 0;
-        if (!marks.isEmpty()) {
-            for (Integer mark : marks) {
-                sum += mark;
-            }
-            return sum.doubleValue() / marks.size();
-        }
-        return sum;
     }
 }

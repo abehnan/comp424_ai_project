@@ -165,7 +165,7 @@ public class MyTestSuite {
 
     // for debug purposes
     // source : https://stackoverflow.com/a/10791597
-    private static double calculateAverage(List<Integer> marks) {
+    public static double calculateAverage(List<Integer> marks) {
         Integer sum = 0;
         if (!marks.isEmpty()) {
             for (Integer mark : marks) {
