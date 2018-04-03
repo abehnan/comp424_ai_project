@@ -213,7 +213,7 @@ class MyTools {
         TablutBoardState.Piece playerPieceType;
         TablutBoardState.Piece opponentPieceType;
 
-        if (player_id == 0) {
+        if (player_id == TablutBoardState.MUSCOVITE) {
             playerPieceType = TablutBoardState.Piece.BLACK;
             opponentPieceType = TablutBoardState.Piece.WHITE;
         } else {
@@ -223,7 +223,8 @@ class MyTools {
 
         // go through all neighbours of piece's coordinates
         for (Coord neighbour : neighbours) {
-            if (boardState.isOpponentPieceAt(neighbour)) {
+            TablutBoardState.Piece neighbourPiece = boardState.getPieceAt(neighbour);
+            if (neighbourPiece == opponentPieceType) {
                 Coord sandwichCoord = null;
                 try {
                     sandwichCoord = Coordinates.getSandwichCoord(pieceCoord, neighbour);
