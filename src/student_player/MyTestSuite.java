@@ -21,7 +21,7 @@ public class MyTestSuite {
     }
 
     private static void muscoviteTest() {
-        int numGames = 300;
+        int numGames = 900;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -104,15 +104,15 @@ public class MyTestSuite {
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
-        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player out of " + (numGames/3) + " games");
-        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player out of " + (numGames/3) + " games");
-        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player out of " + (numGames/3) + " games");
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" + randomWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" + greedyWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" + studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
 
     private static void swedeTest() {
-        int numGames = 300;
+        int numGames = 30;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -196,9 +196,9 @@ public class MyTestSuite {
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
-        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player out of " + (numGames/3) + " games");
-        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player out of " + (numGames/3) + " games");
-        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player out of " + (numGames/3) + " games");
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" + randomWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" + greedyWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" + studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
