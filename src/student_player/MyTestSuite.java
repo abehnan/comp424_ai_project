@@ -104,9 +104,12 @@ public class MyTestSuite {
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
-        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" + randomWins/(numGames/3)*100 + "% win rate)");
-        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" + greedyWins/(numGames/3)*100 + "% win rate)");
-        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" + studentWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" +
+                (double)randomWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" +
+                (double)greedyWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" +
+                (double)studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
@@ -196,9 +199,12 @@ public class MyTestSuite {
         System.out.println(numGames + " games");
         System.out.println("format: WINS/DRAWS/LOSSES");
         System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
-        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" + randomWins/(numGames/3)*100 + "% win rate)");
-        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" + greedyWins/(numGames/3)*100 + "% win rate)");
-        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" + studentWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player (" +
+                (double)randomWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player (" +
+                (double)greedyWins/(numGames/3)*100 + "% win rate)");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player (" +
+                (double)studentWins/(numGames/3)*100 + "% win rate)");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
