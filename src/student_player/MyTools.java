@@ -39,7 +39,7 @@ class MyTools {
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
         int kingDistanceValue = 50;
-        double vulnerablePiecePenalty = 0.6;
+        double vulnerablePiecePenalty = 0.9;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         int moveValue = 0;
@@ -55,7 +55,7 @@ class MyTools {
         // extra steps if we didn't capture a piece
         if (finalOpponentPieces == initialOpponentPieces) {
             // if we didn't capture a piece then putting one of ours in peril is costly...
-            vulnerablePiecePenalty *= 2;
+            vulnerablePiecePenalty *= 5;
 
             // increase value if we moved our piece towards the king
             moveValue -= endCoord.distance(finalBoardState.getKingPosition()) * kingDistanceValue;

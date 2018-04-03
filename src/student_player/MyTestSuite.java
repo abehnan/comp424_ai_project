@@ -26,6 +26,14 @@ public class MyTestSuite {
         int greedyWins = 0;
         int studentWins = 0;
         int totalWins = 0;
+        int randomDraws = 0;
+        int greedyDraws = 0;
+        int studentDraws = 0;
+        int totalDraws = 0;
+        int randomLosses = 0;
+        int greedyLosses = 0;
+        int studentLosses = 0;
+        int totalLosses = 0;
         List<Integer> turnCounts = new ArrayList<>();
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -56,7 +64,17 @@ public class MyTestSuite {
             }
 
             turnCounts.add(b.getTurnNumber());
-            if (b.getWinner() == TablutBoardState.MUSCOVITE) {
+            if (b.getWinner() == TablutBoardState.SWEDE) {
+                if (i < numGames / 3) {
+                    randomLosses++;
+                } else if (i < 2 * numGames / 3) {
+                    greedyLosses++;
+                } else {
+                    studentLosses++;
+                }
+                totalLosses++;
+                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
+            } else if (b.getWinner() == TablutBoardState.MUSCOVITE) {
                 if (i < numGames / 3) {
                     randomWins++;
                 } else if (i < 2 * numGames / 3) {
@@ -66,28 +84,29 @@ public class MyTestSuite {
                 }
                 totalWins++;
                 System.out.println("Game: " + i + " WIN in " + b.getTurnNumber() + " turns.");
-            } else if (b.getWinner() == TablutBoardState.SWEDE) {
-                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
             } else {
+                if (i < numGames / 3) {
+                    randomDraws++;
+                } else if (i < 2 * numGames / 3) {
+                    greedyDraws++;
+                } else {
+                    studentDraws++;
+                }
+                totalDraws++;
                 System.out.println("Game: " + i + " DRAW in " + b.getTurnNumber() + " turns.");
             }
         }
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println(numGames + " games");
-        System.out.println(totalWins + " total muscovite wins");
-        System.out.println(randomWins + " wins vs. random player");
-        System.out.println(greedyWins + " wins vs. greedy player");
-        System.out.println(studentWins + " wins vs student player");
-        double swedeWinRate = (double) totalWins / numGames * 100;
-        double randomWinRate = (double) randomWins / (numGames / 3) * 100;
-        double greedyWinRate = (double) greedyWins / (numGames / 3) * 100;
-        double studentWinRate = (double) studentWins / (numGames / 3) * 100;
+        System.out.println("\t\t\t\tMUSCOVITE TEST COMPLETE");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("average number of turns: " + calculateAverage(turnCounts));
-        System.out.println("total win rate: " + swedeWinRate + "%");
-        System.out.println("win rate vs. random player: " + randomWinRate + "%");
-        System.out.println("win rate vs. greedy player: " + greedyWinRate + "%");
-        System.out.println("win rate vs. student player: " + studentWinRate + "%");
+        System.out.println(numGames + " games");
+        System.out.println("format: WINS/DRAWS/LOSSES");
+        System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player out of " + (numGames/3) + " games");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player out of " + (numGames/3) + " games");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player out of " + (numGames/3) + " games");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
@@ -98,6 +117,14 @@ public class MyTestSuite {
         int greedyWins = 0;
         int studentWins = 0;
         int totalWins = 0;
+        int randomDraws = 0;
+        int greedyDraws = 0;
+        int studentDraws = 0;
+        int totalDraws = 0;
+        int randomLosses = 0;
+        int greedyLosses = 0;
+        int studentLosses = 0;
+        int totalLosses = 0;
         List<Integer> turnCounts = new ArrayList<>();
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -128,7 +155,17 @@ public class MyTestSuite {
             }
 
             turnCounts.add(b.getTurnNumber());
-            if (b.getWinner() == TablutBoardState.SWEDE) {
+            if (b.getWinner() == TablutBoardState.MUSCOVITE) {
+                if (i < numGames / 3) {
+                    randomLosses++;
+                } else if (i < 2 * numGames / 3) {
+                    greedyLosses++;
+                } else {
+                    studentLosses++;
+                }
+                totalLosses++;
+                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
+            } else if (b.getWinner() == TablutBoardState.SWEDE) {
                 if (i < numGames / 3) {
                     randomWins++;
                 } else if (i < 2 * numGames / 3) {
@@ -138,28 +175,30 @@ public class MyTestSuite {
                 }
                 totalWins++;
                 System.out.println("Game: " + i + " WIN in " + b.getTurnNumber() + " turns.");
-            } else if (b.getWinner() == TablutBoardState.MUSCOVITE) {
-                System.out.println("Game: " + i + " LOSS in " + b.getTurnNumber() + " turns.");
             } else {
+                if (i < numGames / 3) {
+                    randomDraws++;
+                } else if (i < 2 * numGames / 3) {
+                    greedyDraws++;
+                } else {
+                    studentDraws++;
+                }
+                totalDraws++;
                 System.out.println("Game: " + i + " DRAW in " + b.getTurnNumber() + " turns.");
             }
         }
 
+
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println(numGames + " games");
-        System.out.println(totalWins + " total swede wins");
-        System.out.println(randomWins + " wins vs. random player");
-        System.out.println(greedyWins + " wins vs. greedy player");
-        System.out.println(studentWins + " wins vs student player");
-        double swedeWinRate = (double) totalWins / numGames * 100;
-        double randomWinRate = (double) randomWins / (numGames / 3) * 100;
-        double greedyWinRate = (double) greedyWins / (numGames / 3) * 100;
-        double studentWinRate = (double) studentWins / (numGames / 3) * 100;
+        System.out.println("\t\t\t\t\tSWEDE TEST COMPLETE");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println("average number of turns: " + calculateAverage(turnCounts));
-        System.out.println("total win rate: " + swedeWinRate + "%");
-        System.out.println("win rate vs. random player: " + randomWinRate + "%");
-        System.out.println("win rate vs. greedy player: " + greedyWinRate + "%");
-        System.out.println("win rate vs. student player: " + studentWinRate + "%");
+        System.out.println(numGames + " games");
+        System.out.println("format: WINS/DRAWS/LOSSES");
+        System.out.println("total score: " + totalWins + "/" + totalDraws + "/" + totalLosses);
+        System.out.println(randomWins + "/" + randomDraws + "/" + randomLosses +  " vs. random player out of " + (numGames/3) + " games");
+        System.out.println(greedyWins + "/" + greedyDraws + "/" + greedyLosses + " vs. greedy player out of " + (numGames/3) + " games");
+        System.out.println(studentWins + "/" + studentDraws + "/" + studentLosses + " vs. student player out of " + (numGames/3) + " games");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
