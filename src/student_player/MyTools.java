@@ -169,7 +169,7 @@ class MyTools {
                                   TablutMove swedeMove) {
 
         double pieceValue = 400;
-        double kingDistanceValue = 5;
+        double kingDistanceValue = 100;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
@@ -180,11 +180,11 @@ class MyTools {
 
         // check for win conditions
         if (finalBoardState.gameOver() && finalBoardState.getWinner() == TablutBoardState.SWEDE) {
-            moveValue += 5000;
+            moveValue += 2000;
         } else if (!initialBoardState.getKingPosition().equals(finalBoardState.getKingPosition())) {
             // check if we put our king in peril
             if (isPieceVulnerable(finalBoardState, swedeMove)) {
-                moveValue -= 5000;
+                moveValue -= 2000;
             }
         }
 
