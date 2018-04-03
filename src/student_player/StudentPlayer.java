@@ -35,7 +35,7 @@ public class StudentPlayer extends TablutPlayer {
     public static void main(String[] args) {
 
 
-        int numGames = 100;
+        int numGames = 500;
         int numDraws = 0;
         int swedeWins = 0;
         int muscoviteWins = 0;
@@ -50,9 +50,9 @@ public class StudentPlayer extends TablutPlayer {
             swede.setColor(TablutBoardState.SWEDE);
 
 
-//            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
+            Player muscovite = new GreedyTablutPlayer("GreedyMuscovite");
 //            Player muscovite = new RandomTablutPlayer("RandomMuscovite");
-            Player muscovite = new StudentPlayer();
+//            Player muscovite = new StudentPlayer();
             muscovite.setColor(TablutBoardState.MUSCOVITE);
 
             Player player = muscovite;
@@ -81,10 +81,12 @@ public class StudentPlayer extends TablutPlayer {
         System.out.println(muscoviteWins + " muscovite wins");
         System.out.println(numDraws + " draws");
         double swedeWinRate = (double) swedeWins / numGames * 100;
+        double drawRate = (double) numDraws / numGames * 100;
         double muscoviteWinRate = (double) muscoviteWins / numGames * 100;
-        System.out.println("average turn number: " + StudentPlayer.calculateAverage(turnCounts));
+        System.out.println("average number of turns: " + StudentPlayer.calculateAverage(turnCounts));
         System.out.println("swede win rate: " + swedeWinRate + "%");
         System.out.println("muscovite win rate: " + muscoviteWinRate + "%");
+        System.out.println("draw rate: " + drawRate + "%");
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     }

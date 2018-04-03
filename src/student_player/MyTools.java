@@ -38,7 +38,7 @@ class MyTools {
         int pieceValue = 100;
         int cornerCaptureBonus = 200;
         int centerCaptureBonus = 500;
-        int kingDistanceValue = 20;
+        int kingDistanceValue = 50;
         double vulnerablePiecePenalty = 0.6;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
@@ -103,7 +103,7 @@ class MyTools {
                                TablutMove swedeMove) {
 
         int pieceValue = 400;
-        int kingDistanceValue = 20;
+        int kingDistanceValue = 5;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         int moveValue = 0;
@@ -121,7 +121,7 @@ class MyTools {
         if (finalOpponentPieces ==  initialOpponentPieces) {
             moveValue -= kingDistance * kingDistanceValue;
         } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            moveValue -=  0.8 * pieceValue;
+            moveValue -= pieceValue;
         }
 
         return moveValue;
