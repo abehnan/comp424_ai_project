@@ -12,7 +12,7 @@ import tablut.TablutMove;
 
 class MyTools {
 
-    // todo: bonus for moving the a piece into a position where it can attach the king
+    // maybe: bonus for moving the a piece into a position where it can attach the king
     // maybe: act differently if king is in castle
 
     private boolean firstTurn;
@@ -22,7 +22,6 @@ class MyTools {
     private final List<Coord> CENTER_NEIGHBOURS ;
 
     MyTools(Player myPlayer) {
-//        this.player_id = myPlayer.getColor();
         this.myPlayer = myPlayer;
         firstTurn = true;
         CENTER = Coordinates.get(4, 4);

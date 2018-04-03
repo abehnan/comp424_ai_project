@@ -18,17 +18,12 @@ import tablut.TablutPlayer;
 public class StudentPlayer extends TablutPlayer {
 
     private MyTools myTools = new MyTools(this);
-    private boolean setup = true;
 
     public StudentPlayer() {
         super("260639146");
     }
 
     public Move chooseMove(TablutBoardState boardState) {
-//        if (setup) {
-//            setup = false;
-//            myTools = new MyTools(this);
-//        }
         if (player_id == TablutBoardState.MUSCOVITE) {
             return myTools.generateMuscoviteMove(boardState);
         } else {
