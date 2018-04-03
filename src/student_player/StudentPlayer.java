@@ -34,8 +34,7 @@ public class StudentPlayer extends TablutPlayer {
     // For Debugging purposes only.
     public static void main(String[] args) {
 
-
-        int numGames = 500;
+        int numGames = 300;
         int numDraws = 0;
         int swedeWins = 0;
         int muscoviteWins = 0;
