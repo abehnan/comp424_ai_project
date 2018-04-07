@@ -54,7 +54,6 @@ class MyTools {
             }
 
             // go through all opponents moves
-            List<Double> moveValues2 = new ArrayList<>();
             for (TablutMove opponentMove : boardState1.getAllLegalMoves()) {
                 TablutBoardState boardState2 = (TablutBoardState) boardState1.clone();
                 boardState2.processMove(opponentMove);
@@ -63,15 +62,8 @@ class MyTools {
                 if (boardState2.gameOver() && boardState2.getWinner() == opponentColor) {
                     continue outerLoop;
                 }
-
-                // go through all of player's move following opponent's move
-                for (TablutMove playerMove2 : boardState2.getAllLegalMoves()) {
-                    TablutBoardState boardState3 = (TablutBoardState) boardState2.clone();
-                    boardState3.processMove(playerMove2);
-                    moveValues2.add(evalMove(boardState2, boardState3, playerMove2));
-                }
             }
-            moveValues1.put(playerMove1, calculateAverageDouble(moveValues2));
+            moveValues1.put(playerMove1, evalMove(boardState, boardState1, playerMove1));
         }
 
         Move myMove = getMaxMove(moveValues1);
@@ -95,11 +87,11 @@ class MyTools {
                                 TablutBoardState finalBoardState,
                                 TablutMove muscoviteMove) {
 
-        int pieceValue = 100;
-        double cornerCaptureBonus = 200;
-        double centerCaptureBonus = 500;
-        double kingDistanceValue = 50;
-        double vulnerablePiecePenalty = 0.9;
+        int pieceValue = 4;
+        double cornerCaptureBonus = 4;
+        double centerCaptureBonus = 10;
+        double kingDistanceValue = 1;
+        double vulnerablePiecePenalty = 1;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
@@ -108,14 +100,9 @@ class MyTools {
         int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
         Coord endCoord = muscoviteMove.getEndPosition();
 
-        // check for win conditions
-        if (finalBoardState.gameOver() && finalBoardState.getWinner() == TablutBoardState.MUSCOVITE) {
-            moveValue += 5000;
-        }
-
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
-        moveValue -= finalOpponentPieces * pieceValue;
+        moveValue -= 2 * (finalOpponentPieces - 1) * pieceValue;
 
         // extra steps if we didn't capture a piece
         if (finalOpponentPieces == initialOpponentPieces) {
@@ -127,8 +114,17 @@ class MyTools {
         }
 
         // check if opponent will capture the moved piece on their next turn
-        if (isPieceVulnerable(finalBoardState, muscoviteMove)) {
+        if (isPieceVulnerable(finalBoardState, muscoviteMove.getEndPosition())) {
             moveValue -= vulnerablePiecePenalty * pieceValue;
+        }
+
+        // check if opponent will capture neighbours of the moved piece
+        for (Coord coord : Coordinates.getNeighbors(muscoviteMove.getStartPosition())) {
+            if (finalBoardState.getPieceAt(coord) == TablutBoardState.Piece.BLACK) {
+                if (isPieceVulnerable(finalBoardState, coord)) {
+                    moveValue -= vulnerablePiecePenalty * pieceValue;
+                }
+            }
         }
 
         // give additional incentive for captures at vulnerable positions
@@ -169,117 +165,117 @@ class MyTools {
                                  TablutBoardState finalBoardState,
                                  TablutMove swedeMove) {
 
-        double pieceValue = 400;
-        double kingDistanceValue = 100;
+        double pieceValue = 6;
+        double kingDistanceValue = 4;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
+        double vulnerablePiecePenalty = 1;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
         int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
         int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
         int kingDistance = Coordinates.distanceToClosestCorner(finalBoardState.getKingPosition());
 
-        // check for win conditions
-        if (finalBoardState.gameOver() && finalBoardState.getWinner() == TablutBoardState.SWEDE) {
-            moveValue += 2000;
-        } else if (!initialBoardState.getKingPosition().equals(finalBoardState.getKingPosition())) {
-            // check if we put our king in peril
-            if (isPieceVulnerable(finalBoardState, swedeMove)) {
-                moveValue -= 2000;
-            }
-        }
-
-
         // increase value for each piece owned, decrease for each piece owned by opponent
-        moveValue += numPlayerPieces * pieceValue;
+        moveValue += 2 * (numPlayerPieces - 1) * pieceValue;
         moveValue -= finalOpponentPieces * pieceValue;
 
         // give incentive for moving king if we didn't capture any opponent pieces
         // if we're going for a capture, check to see if opponent will capture the piece we just moved
         if (finalOpponentPieces == initialOpponentPieces) {
+            vulnerablePiecePenalty *= 3;
             moveValue -= kingDistance * kingDistanceValue;
-        } else if (isPieceVulnerable(finalBoardState, swedeMove)) {
-            moveValue -= pieceValue;
         }
 
+        // check to see if opponent will capture the piece we just moved
+        if (isPieceVulnerable(finalBoardState, swedeMove.getEndPosition())) {
+            moveValue -= vulnerablePiecePenalty * pieceValue;
+        }
+
+        // check if opponent will capture neighbours of the moved piece
+        for (Coord coord : Coordinates.getNeighbors(swedeMove.getStartPosition())) {
+            if (finalBoardState.getPieceAt(coord) == TablutBoardState.Piece.WHITE) {
+                if (isPieceVulnerable(finalBoardState, coord)) {
+                    moveValue -= vulnerablePiecePenalty * pieceValue;
+                }
+            }
+        }
 
         return moveValue;
     }
 
     // returns true if the opponent is able to capture the piece on the following turn
-    private boolean isPieceVulnerable(TablutBoardState boardState, TablutMove playerMove) {
+    private boolean isPieceVulnerable(TablutBoardState boardState, Coord pieceCoord) {
 
-        int player_id = myPlayer.getColor();
-        Coord pieceCoord = playerMove.getEndPosition();
         List<Coord> neighbours = Coordinates.getNeighbors(pieceCoord);
-        TablutBoardState.Piece playerPieceType;
-        TablutBoardState.Piece opponentPieceType;
-
-        if (player_id == TablutBoardState.MUSCOVITE) {
-            playerPieceType = TablutBoardState.Piece.BLACK;
-            opponentPieceType = TablutBoardState.Piece.WHITE;
-        } else {
-            playerPieceType = TablutBoardState.Piece.WHITE;
-            opponentPieceType = TablutBoardState.Piece.BLACK;
-        }
 
         // go through all neighbours of piece's coordinates
         for (Coord neighbour : neighbours) {
             TablutBoardState.Piece neighbourPiece = boardState.getPieceAt(neighbour);
-            if (neighbourPiece == opponentPieceType) {
-                Coord sandwichCoord = null;
-                try {
-                    sandwichCoord = Coordinates.getSandwichCoord(pieceCoord, neighbour);
-                } catch (Exception ignored) {
+
+            if (doesPlayerOwnPiece(neighbourPiece)) {
+                continue;
+            }
+
+            Coord sandwichCoord = null;
+            try {
+                sandwichCoord = Coordinates.getSandwichCoord(pieceCoord, neighbour);
+            } catch (Exception ignored) {
+            }
+            if (sandwichCoord == null) {
+                continue;
+            }
+
+            // if sandwichCoord is on the same row
+            if (sandwichCoord.x == pieceCoord.x) {
+                if (neighbour.y < pieceCoord.y) {
+                    for (int j = sandwichCoord.y; j < 9; j++) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
+                        }
+                        return !doesPlayerOwnPiece(piece);
+                    }
                 }
-                if (sandwichCoord != null) {
-                    // if sandwichCoord is on the same row
-                    if (neighbour.x == pieceCoord.x) {
-                        if (neighbour.y < pieceCoord.y) {
-                            for (int j = sandwichCoord.y; j < 9; j++) {
-                                TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
-                                if (piece == opponentPieceType) {
-                                    return true;
-                                } else if (piece == playerPieceType) {
-                                    return false;
-                                }
-                            }
+                if (neighbour.y > pieceCoord.y) {
+                    for (int j = sandwichCoord.y; j >= 0; j--) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
                         }
-                        if (neighbour.y > pieceCoord.y) {
-                            for (int j = sandwichCoord.y; j >= 0; j--) {
-                                TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
-                                if (piece == opponentPieceType) {
-                                    return true;
-                                } else if (piece == playerPieceType) {
-                                    return false;
-                                }
-                            }
+                        return !doesPlayerOwnPiece(piece);
+                    }
+                }
+                // if sandwichCoord is on the same column
+            } else if (sandwichCoord.y == pieceCoord.y) {
+                if (neighbour.x < pieceCoord.x) {
+                    for (int i = sandwichCoord.x; i < 9; i++) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
                         }
-                        // if sandwichCoord is on the same column
-                    } else if (neighbour.y == pieceCoord.y) {
-                        if (neighbour.x < pieceCoord.x) {
-                            for (int i = sandwichCoord.y; i < 9; i++) {
-                                TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
-                                if (piece == opponentPieceType) {
-                                    return true;
-                                } else if (piece == playerPieceType) {
-                                    return false;
-                                }
-                            }
+                        return !doesPlayerOwnPiece(piece);
+                    }
+                }
+                if (neighbour.x > pieceCoord.x) {
+                    for (int i = sandwichCoord.x; i >= 0; i--) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
                         }
-                        if (neighbour.x > pieceCoord.x) {
-                            for (int i = sandwichCoord.y; i >= 0; i--) {
-                                TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
-                                if (piece == opponentPieceType) {
-                                    return true;
-                                } else if (piece == playerPieceType) {
-                                    return false;
-                                }
-                            }
-                        }
+                        return !doesPlayerOwnPiece(piece);
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece) {
+        if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
+            return (piece == TablutBoardState.Piece.BLACK);
+        } else if (myPlayer.getColor() == TablutBoardState.SWEDE) {
+            return piece == TablutBoardState.Piece.WHITE || piece == TablutBoardState.Piece.KING;
         }
         return false;
     }
@@ -318,17 +314,17 @@ class MyTools {
         }
         return sum;
     }
-
-    private static double calculateAverageDouble(List<Double> marks) {
-        Double sum = 0.0;
-        if (!marks.isEmpty()) {
-            for (Double mark : marks) {
-                sum += mark;
-            }
-            return sum / marks.size();
-        }
-        return sum;
-    }
+//
+//    private static double calculateAverageDouble(List<Double> marks) {
+//        Double sum = 0.0;
+//        if (!marks.isEmpty()) {
+//            for (Double mark : marks) {
+//                sum += mark;
+//            }
+//            return sum / marks.size();
+//        }
+//        return sum;
+//    }
 
 
 }
