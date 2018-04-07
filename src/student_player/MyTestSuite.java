@@ -21,7 +21,7 @@ public class MyTestSuite {
     }
 
     private static void muscoviteTest() {
-        int numGames = 600;
+        int numGames = 150;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -156,10 +156,10 @@ public class MyTestSuite {
 //                continue;
             } else if (i < 2 * numGames / 3) {
                 muscovite = new GreedyTablutPlayer("GreedyMuscovite");
-                continue;
+//                continue;
             } else {
                 muscovite = new StudentPlayer();
-                continue;
+//                continue;
             }
             muscovite.setColor(TablutBoardState.MUSCOVITE);
             Player player = muscovite;

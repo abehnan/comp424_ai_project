@@ -1,13 +1,13 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     SWEDE TEST COMPLETE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-average number of turns: 25.841666666666665
+average number of turns: 21.236666666666668
 600 games
 format: WINS/DRAWS/LOSSES
-total score: 556/28/16
-198/2/0 vs. random player (99.0% win rate)      // trade-off between 100% win rate and Student vs. Student performance
-200/0/0 vs. greedy player (100.0% win rate)
-159/25/16 vs. student player (79.5% win rate)
+total score: 574/15/11
+200/0/0 vs. random player (100.0% win rate)
+199/0/1 vs. greedy player (99.5% win rate)
+175/15/10 vs. student player (87.5% win rate)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,5 +19,5 @@ format: WINS/DRAWS/LOSSES
 total score: 411/40/149
 200/0/0 vs. random player (100.0% win rate)
 200/0/0 vs. greedy player (100.0% win rate)
-11/40/149 vs. student player (5.5% win rate)
+11/30/159 vs. student player (5.5% win rate)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
