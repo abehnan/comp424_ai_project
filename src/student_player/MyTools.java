@@ -7,6 +7,7 @@ import boardgame.Move;
 import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
+import tablut.TablutBoard;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -53,6 +54,28 @@ class MyTools {
                 return playerMove1;
             }
 
+            // lowers win rate vs greedy
+//            if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
+//                if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() == 0) {
+//                    if(boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() != 0) {
+//                        continue;
+//                    }
+//                } else if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
+//                    if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
+//                        return playerMove1;
+//                    }
+//                }
+//            }
+
+            // see if we can trap opponent
+            if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
+                if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
+                    if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
+                        return playerMove1;
+                    }
+                }
+            }
+
             // go through all opponents moves
             for (TablutMove opponentMove : boardState1.getAllLegalMoves()) {
                 TablutBoardState boardState2 = (TablutBoardState) boardState1.clone();
@@ -62,6 +85,14 @@ class MyTools {
                 if (boardState2.gameOver() && boardState2.getWinner() == opponentColor) {
                     continue outerLoop;
                 }
+
+                // check if opponent can trap the king
+                if (myPlayer.getColor() == TablutBoardState.SWEDE) {
+                    if (boardState2.getLegalMovesForPosition(boardState2.getKingPosition()).size() == 0) {
+                        continue outerLoop;
+                    }
+                }
+
             }
             moveValues1.put(playerMove1, evalMove(boardState, boardState1, playerMove1));
         }
