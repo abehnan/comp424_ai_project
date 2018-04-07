@@ -2,6 +2,7 @@ package student_player;
 
 import java.util.*;
 
+import boardgame.Board;
 import boardgame.Move;
 import boardgame.Player;
 import coordinates.Coord;
@@ -76,6 +77,8 @@ class MyTools {
                 // check for opponent win condition
                 if (boardStatePlusTwoTurns.gameOver() && boardStatePlusTwoTurns.getWinner() == opponentColor) {
                     continue outerLoop;
+                } else if (boardStatePlusTwoTurns.gameOver() && boardStatePlusTwoTurns.getWinner() == Board.DRAW) {
+                    continue outerLoop;
                 }
 
                 // check if opponent can trap the king
@@ -113,7 +116,7 @@ class MyTools {
         double cornerCaptureBonus = 3;
         double centerCaptureBonus = 6;
         double kingDistanceValue = 1;
-        double vulnerablePiecePenalty = 1;
+        double vulnerablePiecePenalty = 0.6;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
@@ -187,12 +190,12 @@ class MyTools {
                                  TablutBoardState finalBoardState,
                                  TablutMove swedeMove) {
 
-        double pieceValue = 5;
+        double pieceValue = 6;
         double kingDistanceValue = 4;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
-        double vulnerablePiecePenalty = 1;
+        double vulnerablePiecePenalty = 2;
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
         int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
         int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
@@ -253,19 +256,37 @@ class MyTools {
 
             // if sandwichCoord is on the same row
             if (sandwichCoord.x == pieceCoord.x) {
-                // check lesser side
-                for (int j = sandwichCoord.y; j >= 0; j--) {
-                    TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
-                    if (piece == TablutBoardState.Piece.EMPTY) {
-                        continue;
-                    }
-                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
-                        break;
-                    }
-                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
-                        return true;
+                // check the appropriate part of that row
+                if (neighbour.x < pieceCoord.x) {
+                    for (int i = sandwichCoord.x; i < 9; i++) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
+                        }
+                        if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                            break;
+                        }
+                        if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                            return true;
+                        }
                     }
                 }
+                if (neighbour.x > pieceCoord.x) {
+                    for (int i = sandwichCoord.x; i >= 0; i--) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
+                        }
+                        if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                            break;
+                        }
+                        if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                            return true;
+                        }
+                    }
+                }
+
+                // check both sides of the column
                 for (int j = sandwichCoord.y; j < 9; j++) {
                     TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
                     if (piece == TablutBoardState.Piece.EMPTY) {
@@ -278,8 +299,52 @@ class MyTools {
                         return true;
                     }
                 }
+                for (int j = sandwichCoord.y; j >= 0; j--) {
+                    TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                    if (piece == TablutBoardState.Piece.EMPTY) {
+                        continue;
+                    }
+                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                        break;
+                    }
+                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                        return true;
+                    }
+                }
+
                 // if sandwichCoord is on the same column
             } else if (sandwichCoord.y == pieceCoord.y) {
+                // check the appropriate side of the column
+                if (neighbour.y < pieceCoord.y) {
+                    for (int j = sandwichCoord.y; j < 9; j++) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
+                        }
+                        if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                            break;
+                        }
+                        if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                            return true;
+                        }
+                    }
+                }
+                if (neighbour.y > pieceCoord.y) {
+                    for (int j = sandwichCoord.y; j >= 0; j--) {
+                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                        if (piece == TablutBoardState.Piece.EMPTY) {
+                            continue;
+                        }
+                        if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                            break;
+                        }
+                        if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                            return true;
+                        }
+                    }
+                }
+
+                // check both sides of the row
                 for (int i = sandwichCoord.x; i >= 0; i--) {
                     TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
                     if (piece == TablutBoardState.Piece.EMPTY) {
@@ -359,7 +424,7 @@ class MyTools {
     // returns true if the player with the corresponding color owns a piece
     private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece, int color) {
         if (color == TablutBoardState.MUSCOVITE) {
-            return (piece == TablutBoardState.Piece.BLACK);
+            return piece == TablutBoardState.Piece.BLACK;
         } else if (color == TablutBoardState.SWEDE) {
             return piece == TablutBoardState.Piece.WHITE || piece == TablutBoardState.Piece.KING;
         }
@@ -411,7 +476,7 @@ class MyTools {
         // simulate
         for (TablutMove move: bestMoves) {
             double wins = 0;
-            double numGames = 15;
+            double numGames = 25;
 
             for (int i = 0; i < numGames; i++) {
                 TablutBoardState bs = (TablutBoardState)initialBoardState.clone();

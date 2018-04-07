@@ -16,6 +16,12 @@ public class StudentPlayer extends TablutPlayer {
     }
 
     public Move chooseMove(TablutBoardState boardState) {
-        return myTools.getMove(boardState);
+        long start = System.currentTimeMillis();
+        Move myMove = myTools.getMove(boardState);
+        long end = System.currentTimeMillis() - start;
+        if (end >= 1500) {
+            System.out.println("WARNING time: " + end + "ms");
+        }
+        return myMove;
     }
 }
