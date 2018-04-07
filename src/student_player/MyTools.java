@@ -99,12 +99,12 @@ class MyTools {
                 }
 
                 // check if opponent can trap the king
-//                if (myPlayer.getColor() == TablutBoardState.SWEDE) {
-//                    if (boardStatePlusTwoTurns.getLegalMovesForPosition(
-//                            boardStatePlusTwoTurns.getKingPosition()).size() == 0) {
-//                        continue outerLoop;
-//                    }
-//                }
+                if (myPlayer.getColor() == TablutBoardState.SWEDE) {
+                    if (boardStatePlusTwoTurns.getLegalMovesForPosition(
+                            boardStatePlusTwoTurns.getKingPosition()).size() == 0) {
+                        continue outerLoop;
+                    }
+                }
 
             }
             moveValues.put(playerMove, evalMove(boardState, boardStatePlusOneTurn, playerMove));
