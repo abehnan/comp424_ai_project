@@ -55,11 +55,11 @@ class MyTools {
 
             if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
                 // see if we can trap opponent king
-                if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
-                    if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
-                        return playerMove1;
-                    }
-                }
+//                if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
+//                    if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
+//                        return playerMove1;
+//                    }
+//                }
 
                 // check that we can have a piece on all edges
                 if (boardState1.getNumberPlayerPieces(myPlayer.getColor()) > 5) {
@@ -111,9 +111,9 @@ class MyTools {
                                 TablutBoardState finalBoardState,
                                 TablutMove muscoviteMove) {
 
-        int pieceValue = 4;
-        double cornerCaptureBonus = 4;
-        double centerCaptureBonus = 10;
+        int pieceValue = 3;
+        double cornerCaptureBonus = 3;
+        double centerCaptureBonus = 6;
         double kingDistanceValue = 1;
         double vulnerablePiecePenalty = 1;
         int player_id = myPlayer.getColor();
