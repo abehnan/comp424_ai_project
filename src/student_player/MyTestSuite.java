@@ -21,7 +21,7 @@ public class MyTestSuite {
     }
 
     private static void muscoviteTest() {
-        int numGames = 15;
+        int numGames = 600;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;
@@ -123,7 +123,7 @@ public class MyTestSuite {
 
 
     private static void swedeTest() {
-        int numGames = 15;
+        int numGames = 600;
         int randomWins = 0;
         int greedyWins = 0;
         int studentWins = 0;

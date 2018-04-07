@@ -1,7 +1,5 @@
 package student_player;
 
-import java.util.*;
-
 import boardgame.Board;
 import boardgame.Move;
 import boardgame.Player;
@@ -10,16 +8,22 @@ import coordinates.Coordinates;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 class MyTools {
 
+    // TODO
     // maybe: bonus for moving the a piece into a position where it can attach the king
     // maybe: act differently if king is in castle
 
-    private boolean firstTurn;
     private final Player myPlayer;
     private final Coord CENTER;
     private final List<Coord> CORNERS;
     private final List<Coord> CENTER_NEIGHBOURS;
+    private boolean firstTurn;
 
     // constructor
     MyTools(Player myPlayer) {
@@ -28,6 +32,19 @@ class MyTools {
         CENTER = Coordinates.get(4, 4);
         CORNERS = Coordinates.getCorners();
         CENTER_NEIGHBOURS = Coordinates.getNeighbors(CENTER);
+    }
+
+    // for debug purposes
+    // source : https://stackoverflow.com/a/10791597
+    static double calculateAverageInteger(List<Integer> marks) {
+        Integer sum = 0;
+        if (!marks.isEmpty()) {
+            for (Integer mark : marks) {
+                sum += mark;
+            }
+            return sum.doubleValue() / marks.size();
+        }
+        return sum;
     }
 
     // generates a move
@@ -82,11 +99,12 @@ class MyTools {
                 }
 
                 // check if opponent can trap the king
-                if (myPlayer.getColor() == TablutBoardState.SWEDE) {
-                    if (boardStatePlusTwoTurns.getLegalMovesForPosition(boardStatePlusTwoTurns.getKingPosition()).size() == 0) {
-                        continue outerLoop;
-                    }
-                }
+//                if (myPlayer.getColor() == TablutBoardState.SWEDE) {
+//                    if (boardStatePlusTwoTurns.getLegalMovesForPosition(
+//                            boardStatePlusTwoTurns.getKingPosition()).size() == 0) {
+//                        continue outerLoop;
+//                    }
+//                }
 
             }
             moveValues.put(playerMove, evalMove(boardState, boardStatePlusOneTurn, playerMove));
@@ -100,17 +118,17 @@ class MyTools {
                             TablutBoardState finalBoardState,
                             TablutMove playerMove) {
         if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
-            return muscEvalMove(initialBoardState, finalBoardState, playerMove);
+            return evalMuscoviteMove(initialBoardState, finalBoardState, playerMove);
         } else if (myPlayer.getColor() == TablutBoardState.SWEDE) {
-            return swedeEvalMove(initialBoardState, finalBoardState, playerMove);
+            return evalSwedeMove(initialBoardState, finalBoardState, playerMove);
         }
         return null;
     }
 
-    // evaluates a muscovites player's move
-    private Double muscEvalMove(TablutBoardState initialBoardState,
-                                TablutBoardState finalBoardState,
-                                TablutMove muscoviteMove) {
+    // evaluates a Muscovite player's move
+    private Double evalMuscoviteMove(TablutBoardState initialBoardState,
+                                     TablutBoardState finalBoardState,
+                                     TablutMove muscoviteMove) {
 
         int pieceValue = 3;
         double cornerCaptureBonus = 3;
@@ -123,7 +141,7 @@ class MyTools {
         int numPlayerPieces = finalBoardState.getNumberPlayerPieces(player_id);
         int finalOpponentPieces = finalBoardState.getNumberPlayerPieces(opponent);
         int initialOpponentPieces = initialBoardState.getNumberPlayerPieces(opponent);
-        Coord endCoord = muscoviteMove.getEndPosition();
+        Coord endPosition = muscoviteMove.getEndPosition();
 
         // increase value for each piece owned, decrease for each piece owned by opponent
         moveValue += numPlayerPieces * pieceValue;
@@ -132,10 +150,10 @@ class MyTools {
         // extra steps if we didn't capture a piece
         if (finalOpponentPieces == initialOpponentPieces) {
             // if we didn't capture a piece then putting one of ours in peril is costly...
-            vulnerablePiecePenalty *= 5;
+            vulnerablePiecePenalty *= 3;
 
             // increase value if we moved our piece towards the king
-            moveValue -= endCoord.distance(finalBoardState.getKingPosition()) * kingDistanceValue;
+            moveValue -= endPosition.distance(finalBoardState.getKingPosition()) * kingDistanceValue;
         }
 
         // check if opponent will capture the moved piece on their next turn
@@ -145,7 +163,7 @@ class MyTools {
 
         // check if opponent will capture neighbours of the moved piece
         for (Coord coord : Coordinates.getNeighbors(muscoviteMove.getStartPosition())) {
-            if (finalBoardState.getPieceAt(coord) == TablutBoardState.Piece.BLACK) {
+            if (doesPlayerOwnPiece(finalBoardState.getPieceAt(coord), myPlayer.getColor())) {
                 if (isPieceVulnerable(finalBoardState, coord)) {
                     moveValue -= vulnerablePiecePenalty * pieceValue;
                 }
@@ -159,7 +177,7 @@ class MyTools {
                 if (initialBoardState.isOpponentPieceAt(centerNeighbor)) {
                     try {
                         Coord sandwichCoord = Coordinates.getSandwichCoord(CENTER, centerNeighbor);
-                        if (endCoord.equals(sandwichCoord)) {
+                        if (endPosition.equals(sandwichCoord)) {
                             moveValue += centerCaptureBonus;
                         }
                     } catch (Exception ignored) {
@@ -173,7 +191,7 @@ class MyTools {
                 if (initialBoardState.isOpponentPieceAt(cornerNeighbour)) {
                     try {
                         Coord sandwichCoord = Coordinates.getSandwichCoord(corner, cornerNeighbour);
-                        if (endCoord.equals(sandwichCoord)) {
+                        if (endPosition.equals(sandwichCoord)) {
 
                             moveValue += cornerCaptureBonus;
                         }
@@ -185,13 +203,13 @@ class MyTools {
         return moveValue;
     }
 
-    // evaluates a swede player's move
-    private Double swedeEvalMove(TablutBoardState initialBoardState,
+    // evaluates a Swede player's move
+    private Double evalSwedeMove(TablutBoardState initialBoardState,
                                  TablutBoardState finalBoardState,
                                  TablutMove swedeMove) {
 
-        double pieceValue = 6;
-        double kingDistanceValue = 4;
+        double pieceValue = 2;
+        double kingDistanceValue = 1;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
         double moveValue = 0;
@@ -420,7 +438,6 @@ class MyTools {
 
     }
 
-
     // returns true if the player with the corresponding color owns a piece
     private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece, int color) {
         if (color == TablutBoardState.MUSCOVITE) {
@@ -453,10 +470,7 @@ class MyTools {
                 bestMoves.add(entry.getKey());
             }
         }
-
-//            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
-//            return bestMoves.get(random);
-
+        // if so run simulations on them and output best move
         if (bestMoves.size() == 0) {
             return boardState.getRandomMove();
         } else if (bestMoves.size() == 1) {
@@ -464,6 +478,9 @@ class MyTools {
         } else {
             return simulateBestMoves(boardState, bestMoves);
         }
+
+//            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
+//            return bestMoves.get(random);
     }
 
     // simulates 15 games starting from initialBoardState for all moves in the list
@@ -474,21 +491,21 @@ class MyTools {
         Map<TablutMove, Double> moveValues = new HashMap<>();
 
         // simulate
-        for (TablutMove move: bestMoves) {
+        for (TablutMove move : bestMoves) {
             double wins = 0;
             double numGames = 25;
 
             for (int i = 0; i < numGames; i++) {
-                TablutBoardState bs = (TablutBoardState)initialBoardState.clone();
+                TablutBoardState bs = (TablutBoardState) initialBoardState.clone();
                 bs.processMove(move);
                 while (!bs.gameOver()) {
-                    bs.processMove((TablutMove)bs.getRandomMove());
+                    bs.processMove((TablutMove) bs.getRandomMove());
                 }
                 if (bs.getWinner() == myPlayer.getColor()) {
                     wins++;
                 }
             }
-            moveValues.put(move, wins/numGames);
+            moveValues.put(move, wins / numGames);
         }
 
         // find key with max value and return
@@ -503,19 +520,6 @@ class MyTools {
         } else {
             return maxEntry.getKey();
         }
-    }
-
-    // for debug purposes
-    // source : https://stackoverflow.com/a/10791597
-    static double calculateAverageInteger(List<Integer> marks) {
-        Integer sum = 0;
-        if (!marks.isEmpty()) {
-            for (Integer mark : marks) {
-                sum += mark;
-            }
-            return sum.doubleValue() / marks.size();
-        }
-        return sum;
     }
 
 }
