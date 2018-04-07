@@ -490,13 +490,10 @@ class MyTools {
     private Move simulateBestMoves(TablutBoardState initialBoardState, List<TablutMove> bestMoves) {
 
         Map<TablutMove, Double> moveValues = new HashMap<>();
-        List<SimulationResult> results = new ArrayList<>();
-        int opponent = 1 - myPlayer.getColor();
         int numGames = 50;
 
         // simulate
         for (TablutMove move : bestMoves) {
-            int losses = 0;
             int wins = 0;
 
             for (int i = 0; i < numGames; i++) {
@@ -505,26 +502,21 @@ class MyTools {
                 while (!bs.gameOver()) {
                     bs.processMove((TablutMove) bs.getRandomMove());
                 }
-                if (bs.getWinner() == opponent) {
-                    losses++;
-                } else if (bs.getWinner() == myPlayer.getColor()) {
+                if (bs.getWinner() == myPlayer.getColor()) {
                     wins++;
                 }
             }
-            moveValues.put(move, (double)losses / numGames);
-//            results.add(new SimulationResult(move, wins, losses));
+            moveValues.put(move, (double)wins / numGames);
         }
 
-//         find key with min loss rate and return
+        // find key with min loss rate and return
         Map.Entry<TablutMove, Double> maxEntry = null;
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
                 maxEntry = entry;
             }
         }
-//        if (maxEntry == null) {
-//            return initialBoardState.getRandomMove();
-//        }
+
         List<Map.Entry<TablutMove, Double>> movesWithMostWins = new ArrayList<>();
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
@@ -540,73 +532,5 @@ class MyTools {
             return movesWithMostWins.get(ThreadLocalRandom.current().nextInt(movesWithMostWins.size())).getKey();
         }
 
-
-        // get all moves with the max number of wins
-//        SimulationResult moveWithMostWins = results.get(0);
-//        for (SimulationResult simulationResult : results) {
-//            if (simulationResult.getNumWins() > moveWithMostWins.getNumWins()) {
-//                moveWithMostWins = simulationResult;
-//            }
-//        }
-//        List<SimulationResult> movesWithMostWins = new ArrayList<>();
-//        for (SimulationResult simulationResult : results) {
-//            if (simulationResult.getNumWins() == moveWithMostWins.getNumWins()) {
-//                movesWithMostWins.add(simulationResult);
-//            }
-//        }
-//        // if 0 or 1 move found, return
-//        if(movesWithMostWins.size() == 0) {
-//            return initialBoardState.getRandomMove();
-//        } else if (movesWithMostWins.size() == 1) {
-//            return movesWithMostWins.get(0).getMove();
-//        } else {
-//            return movesWithMostWins.get(ThreadLocalRandom.current().nextInt(movesWithMostWins.size())).getMove();
-//        }
-
-        // if multiple moves with best win rate found, return random move with min number of losses
-//        SimulationResult moveWithLeastLosses = movesWithMostWins.get(0);
-//        for (SimulationResult simulationResult : movesWithMostWins) {
-//            if (simulationResult.getNumLosses() < moveWithLeastLosses.getNumLosses()) {
-//                moveWithLeastLosses = simulationResult;
-//            }
-//        }
-//        List<SimulationResult> movesWithLeastLosses = new ArrayList<>();
-//        for (SimulationResult simulationResult : results) {
-//            if (simulationResult.getNumLosses() == moveWithLeastLosses.getNumLosses()) {
-//                movesWithLeastLosses.add(simulationResult);
-//            }
-//        }
-//        if(movesWithLeastLosses.size() == 0) {
-//            return initialBoardState.getRandomMove();
-//        } else if (movesWithLeastLosses.size() == 1) {
-//            return movesWithLeastLosses.get(0).getMove();
-//        } else {
-//            return movesWithLeastLosses.get(ThreadLocalRandom.current().nextInt(movesWithLeastLosses.size())).getMove();
-//        }
     }
-
-    private class SimulationResult {
-        private final Move move;
-        private final int numWins;
-        private final int numLosses;
-
-        SimulationResult(Move move, int numWins, int numLosses) {
-            this.move = move;
-            this.numWins = numWins;
-            this.numLosses = numLosses;
-        }
-
-        Move getMove() {
-            return move;
-        }
-
-        int getNumWins() {
-            return numWins;
-        }
-
-        int getNumLosses() {
-            return numLosses;
-        }
-    }
-
 }
