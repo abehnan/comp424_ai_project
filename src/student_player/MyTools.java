@@ -7,6 +7,7 @@ import boardgame.Move;
 import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
+import tablut.GreedyTablutPlayer;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -90,7 +91,7 @@ class MyTools {
             moveValues1.put(playerMove1, evalMove(boardState, boardState1, playerMove1));
         }
 
-        Move myMove = getMaxMove(moveValues1);
+        Move myMove = getBestMove(boardState, moveValues1);
         return myMove == null ? boardState.getRandomMove() : myMove;
     }
 
@@ -189,7 +190,7 @@ class MyTools {
                                  TablutBoardState finalBoardState,
                                  TablutMove swedeMove) {
 
-        double pieceValue = 6;
+        double pieceValue = 5;
         double kingDistanceValue = 4;
         int player_id = myPlayer.getColor();
         int opponent = 1 - player_id;
@@ -204,8 +205,17 @@ class MyTools {
         moveValue += 2 * (numPlayerPieces - 1) * pieceValue;
         moveValue -= finalOpponentPieces * pieceValue;
 
+        // check if opponent will capture neighbours of the moved piece
+        for (Coord coord : Coordinates.getNeighbors(swedeMove.getStartPosition())) {
+            if (finalBoardState.getPieceAt(coord) == TablutBoardState.Piece.WHITE) {
+                if (isPieceVulnerable(finalBoardState, coord)) {
+                    moveValue -= vulnerablePiecePenalty * pieceValue;
+                }
+            }
+        }
+
         // give incentive for moving king if we didn't capture any opponent pieces
-        // if we're going for a capture, check to see if opponent will capture the piece we just moved
+        // if we don't capture, sacrificing a piece is costly...
         if (finalOpponentPieces == initialOpponentPieces) {
             vulnerablePiecePenalty *= 3;
             moveValue -= kingDistance * kingDistanceValue;
@@ -214,15 +224,6 @@ class MyTools {
         // check to see if opponent will capture the piece we just moved
         if (isPieceVulnerable(finalBoardState, swedeMove.getEndPosition())) {
             moveValue -= vulnerablePiecePenalty * pieceValue;
-        }
-
-        // check if opponent will capture neighbours of the moved piece
-        for (Coord coord : Coordinates.getNeighbors(swedeMove.getStartPosition())) {
-            if (finalBoardState.getPieceAt(coord) == TablutBoardState.Piece.WHITE) {
-                if (isPieceVulnerable(finalBoardState, coord)) {
-                    moveValue -= vulnerablePiecePenalty * pieceValue;
-                }
-            }
         }
 
         return moveValue;
@@ -369,24 +370,95 @@ class MyTools {
 
     // returns the move with the highest value
     // source : https://stackoverflow.com/a/5911199
-    private Move getMaxMove(Map<TablutMove, Double> moveValues) {
+//    private Move getMaxMove(Map<TablutMove, Double> moveValues) {
+//        Map.Entry<TablutMove, Double> maxEntry = null;
+//        for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
+//            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+//                maxEntry = entry;
+//            }
+//        }
+//        if (maxEntry != null) {
+//            List<TablutMove> bestMoves = new ArrayList<>();
+//            for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
+//                if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
+//                    bestMoves.add(entry.getKey());
+//                }
+//            }
+//            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
+//            return bestMoves.get(random);
+//        }
+//        return null;
+//    }
+
+    // returns the move with the highest value
+    private Move getBestMove(TablutBoardState boardState, Map<TablutMove, Double> moveValues) {
         Map.Entry<TablutMove, Double> maxEntry = null;
+        List<TablutMove> bestMoves = new ArrayList<>();
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
                 maxEntry = entry;
             }
         }
         if (maxEntry != null) {
-            List<TablutMove> bestMoves = new ArrayList<>();
             for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
                 if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
                     bestMoves.add(entry.getKey());
                 }
             }
-            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
-            return bestMoves.get(random);
+//            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
+//            return bestMoves.get(random);
+            if (bestMoves.size() == 0) {
+                return boardState.getRandomMove();
+            } else if (bestMoves.size() == 1) {
+                return bestMoves.get(0);
+            } else {
+                return simulateBestMoves(boardState, bestMoves);
+            }
+        } else {
+            return boardState.getRandomMove();
         }
-        return null;
+    }
+
+    private Move simulateBestMoves(TablutBoardState initialBoardState, List<TablutMove> bestMoves) {
+
+        Map<TablutMove, Double> moveValues = new HashMap<>();
+        for (TablutMove move: bestMoves) {
+            double wins = 0;
+            double numGames = 15;
+
+            for (int i = 0; i < numGames; i++) {
+                TablutBoardState bs = (TablutBoardState)initialBoardState.clone();
+                bs.processMove(move);
+                while (!bs.gameOver()) {
+                    bs.processMove((TablutMove)bs.getRandomMove());
+                }
+                if (bs.getWinner() == myPlayer.getColor()) {
+                    wins++;
+                }
+            }
+            moveValues.put(move, wins/numGames);
+        }
+
+        Map.Entry<TablutMove, Double> maxEntry = null;
+        List<TablutMove> newBestMoves = new ArrayList<>();
+        for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                maxEntry = entry;
+            }
+            if (maxEntry != null) {
+                if (entry.getValue().compareTo(maxEntry.getValue()) == 0 || newBestMoves.size() == 0) {
+                    newBestMoves.add(entry.getKey());
+                }
+            }
+        }
+        if (newBestMoves.size() == 0) {
+            return initialBoardState.getRandomMove();
+        } else if (newBestMoves.size() == 1) {
+            return newBestMoves.get(0);
+        } else {
+            return newBestMoves.get(ThreadLocalRandom.current().nextInt(newBestMoves.size()));
+        }
+
     }
 
     // for debug purposes
