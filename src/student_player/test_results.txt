@@ -5,7 +5,7 @@ average number of turns: 25.841666666666665
 600 games
 format: WINS/DRAWS/LOSSES
 total score: 556/28/16
-197/3/0 vs. random player (98.5% win rate)      // trade-off between 100% win rate and Student vs. Student performance
+198/2/0 vs. random player (99.0% win rate)      // trade-off between 100% win rate and Student vs. Student performance
 200/0/0 vs. greedy player (100.0% win rate)
 159/25/16 vs. student player (79.5% win rate)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

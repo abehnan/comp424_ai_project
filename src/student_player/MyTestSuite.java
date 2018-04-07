@@ -156,10 +156,10 @@ public class MyTestSuite {
 //                continue;
             } else if (i < 2 * numGames / 3) {
                 muscovite = new GreedyTablutPlayer("GreedyMuscovite");
-//                continue;
+                continue;
             } else {
                 muscovite = new StudentPlayer();
-//                continue;
+                continue;
             }
             muscovite.setColor(TablutBoardState.MUSCOVITE);
             Player player = muscovite;
