@@ -7,7 +7,6 @@ import boardgame.Move;
 import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
-import tablut.GreedyTablutPlayer;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -312,6 +311,7 @@ class MyTools {
         return false;
     }
 
+    // returns true if the player owns at least one unit all all 4 edges of the game board
     private boolean doesPlayerHavePieceOnAllEdges(TablutBoardState boardState) {
         boolean pieceFound = false;
 
@@ -368,57 +368,42 @@ class MyTools {
         return false;
     }
 
-    // returns the move with the highest value
-    // source : https://stackoverflow.com/a/5911199
-//    private Move getMaxMove(Map<TablutMove, Double> moveValues) {
-//        Map.Entry<TablutMove, Double> maxEntry = null;
-//        for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
-//            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-//                maxEntry = entry;
-//            }
-//        }
-//        if (maxEntry != null) {
-//            List<TablutMove> bestMoves = new ArrayList<>();
-//            for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
-//                if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
-//                    bestMoves.add(entry.getKey());
-//                }
-//            }
-//            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
-//            return bestMoves.get(random);
-//        }
-//        return null;
-//    }
-
-    // returns the move with the highest value
+    // returns the best move to choose, if more than one option, runs simulations on the moves
     private Move getBestMove(TablutBoardState boardState, Map<TablutMove, Double> moveValues) {
+
         Map.Entry<TablutMove, Double> maxEntry = null;
-        List<TablutMove> bestMoves = new ArrayList<>();
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
                 maxEntry = entry;
             }
         }
-        if (maxEntry != null) {
-            for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
-                if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
-                    bestMoves.add(entry.getKey());
-                }
+
+        if (maxEntry == null) {
+            return boardState.getRandomMove();
+        }
+
+        List<TablutMove> bestMoves = new ArrayList<>();
+        for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
+            if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
+                bestMoves.add(entry.getKey());
             }
+        }
+
 //            int random = ThreadLocalRandom.current().nextInt(bestMoves.size());
 //            return bestMoves.get(random);
-            if (bestMoves.size() == 0) {
-                return boardState.getRandomMove();
-            } else if (bestMoves.size() == 1) {
-                return bestMoves.get(0);
-            } else {
-                return simulateBestMoves(boardState, bestMoves);
-            }
-        } else {
+
+        if (bestMoves.size() == 0) {
             return boardState.getRandomMove();
+        } else if (bestMoves.size() == 1) {
+            return bestMoves.get(0);
+        } else {
+            return simulateBestMoves(boardState, bestMoves);
         }
     }
 
+    // simulates 15 games starting from initialBoardState for all moves in the list
+    // should not be called with a large list due to computational time
+    // returns move with highest value
     private Move simulateBestMoves(TablutBoardState initialBoardState, List<TablutMove> bestMoves) {
 
         Map<TablutMove, Double> moveValues = new HashMap<>();
@@ -440,25 +425,16 @@ class MyTools {
         }
 
         Map.Entry<TablutMove, Double> maxEntry = null;
-        List<TablutMove> newBestMoves = new ArrayList<>();
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
                 maxEntry = entry;
             }
-            if (maxEntry != null) {
-                if (entry.getValue().compareTo(maxEntry.getValue()) == 0 || newBestMoves.size() == 0) {
-                    newBestMoves.add(entry.getKey());
-                }
-            }
         }
-        if (newBestMoves.size() == 0) {
+        if (maxEntry == null) {
             return initialBoardState.getRandomMove();
-        } else if (newBestMoves.size() == 1) {
-            return newBestMoves.get(0);
         } else {
-            return newBestMoves.get(ThreadLocalRandom.current().nextInt(newBestMoves.size()));
+            return maxEntry.getKey();
         }
-
     }
 
     // for debug purposes
