@@ -7,7 +7,6 @@ import boardgame.Move;
 import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
-import tablut.TablutBoard;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 
@@ -54,24 +53,18 @@ class MyTools {
                 return playerMove1;
             }
 
-            // lowers win rate vs greedy
-//            if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
-//                if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() == 0) {
-//                    if(boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() != 0) {
-//                        continue;
-//                    }
-//                } else if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
-//                    if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
-//                        return playerMove1;
-//                    }
-//                }
-//            }
-
-            // see if we can trap opponent
             if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
+                // see if we can trap opponent king
                 if (boardState.getLegalMovesForPosition(boardState.getKingPosition()).size() > 0) {
                     if (boardState1.getLegalMovesForPosition(boardState1.getKingPosition()).size() == 0) {
                         return playerMove1;
+                    }
+                }
+
+                // check that we can have a piece on all edges
+                if (boardState1.getNumberPlayerPieces(myPlayer.getColor()) > 5) {
+                    if (!doesPlayerHavePieceOnAllEdges(boardState1)) {
+                        continue;
                     }
                 }
             }
@@ -318,6 +311,53 @@ class MyTools {
         return false;
     }
 
+    private boolean doesPlayerHavePieceOnAllEdges(TablutBoardState boardState) {
+        boolean pieceFound = false;
+
+        for (int i = 0; i < 9; i++) {
+            if (doesPlayerOwnPiece(boardState.getPieceAt(i, 0), myPlayer.getColor())) {
+                pieceFound = true;
+            }
+        }
+        if (pieceFound) {
+            pieceFound = false;
+        } else {
+            return false;
+        }
+
+        for (int i = 0; i < 9; i++) {
+            if (doesPlayerOwnPiece(boardState.getPieceAt(i, 8), myPlayer.getColor())) {
+                pieceFound = true;
+            }
+        }
+        if (pieceFound) {
+            pieceFound = false;
+        } else {
+            return false;
+        }
+
+        for (int j = 0; j < 9; j++) {
+            if (doesPlayerOwnPiece(boardState.getPieceAt(0, j), myPlayer.getColor())) {
+                pieceFound = true;
+            }
+        }
+        if (pieceFound) {
+            pieceFound = false;
+        } else {
+            return false;
+        }
+
+        for (int j = 0; j < 9; j++) {
+            if (doesPlayerOwnPiece(boardState.getPieceAt(8, j), myPlayer.getColor())) {
+                pieceFound = true;
+            }
+        }
+        return pieceFound;
+
+    }
+
+
+    // returns true if the player with the corresponding color owns a piece
     private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece, int color) {
         if (color == TablutBoardState.MUSCOVITE) {
             return (piece == TablutBoardState.Piece.BLACK);
