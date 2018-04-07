@@ -213,7 +213,7 @@ class MyTools {
         for (Coord neighbour : neighbours) {
             TablutBoardState.Piece neighbourPiece = boardState.getPieceAt(neighbour);
 
-            if (doesPlayerOwnPiece(neighbourPiece)) {
+            if (doesPlayerOwnPiece(neighbourPiece, myPlayer.getColor())) {
                 continue;
             }
 
@@ -225,45 +225,61 @@ class MyTools {
             if (sandwichCoord == null) {
                 continue;
             }
+            if (!boardState.coordIsEmpty(sandwichCoord)) {
+                continue;
+            }
 
             // if sandwichCoord is on the same row
             if (sandwichCoord.x == pieceCoord.x) {
-                if (neighbour.y < pieceCoord.y) {
-                    for (int j = sandwichCoord.y; j < 9; j++) {
-                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
-                        if (piece == TablutBoardState.Piece.EMPTY) {
-                            continue;
-                        }
-                        return !doesPlayerOwnPiece(piece);
+                // check lesser side
+                for (int j = sandwichCoord.y; j >= 0; j--) {
+                    TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                    if (piece == TablutBoardState.Piece.EMPTY) {
+                        continue;
+                    }
+                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                        break;
+                    }
+                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                        return true;
                     }
                 }
-                if (neighbour.y > pieceCoord.y) {
-                    for (int j = sandwichCoord.y; j >= 0; j--) {
-                        TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
-                        if (piece == TablutBoardState.Piece.EMPTY) {
-                            continue;
-                        }
-                        return !doesPlayerOwnPiece(piece);
+                for (int j = sandwichCoord.y; j < 9; j++) {
+                    TablutBoardState.Piece piece = boardState.getPieceAt(sandwichCoord.x, j);
+                    if (piece == TablutBoardState.Piece.EMPTY) {
+                        continue;
+                    }
+                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                        break;
+                    }
+                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                        return true;
                     }
                 }
                 // if sandwichCoord is on the same column
             } else if (sandwichCoord.y == pieceCoord.y) {
-                if (neighbour.x < pieceCoord.x) {
-                    for (int i = sandwichCoord.x; i < 9; i++) {
-                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
-                        if (piece == TablutBoardState.Piece.EMPTY) {
-                            continue;
-                        }
-                        return !doesPlayerOwnPiece(piece);
+                for (int i = sandwichCoord.x; i >= 0; i--) {
+                    TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                    if (piece == TablutBoardState.Piece.EMPTY) {
+                        continue;
+                    }
+                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                        break;
+                    }
+                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                        return true;
                     }
                 }
-                if (neighbour.x > pieceCoord.x) {
-                    for (int i = sandwichCoord.x; i >= 0; i--) {
-                        TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
-                        if (piece == TablutBoardState.Piece.EMPTY) {
-                            continue;
-                        }
-                        return !doesPlayerOwnPiece(piece);
+                for (int i = sandwichCoord.x; i < 9; i++) {
+                    TablutBoardState.Piece piece = boardState.getPieceAt(i, sandwichCoord.y);
+                    if (piece == TablutBoardState.Piece.EMPTY) {
+                        continue;
+                    }
+                    if (doesPlayerOwnPiece(piece, myPlayer.getColor())) {
+                        break;
+                    }
+                    if (doesPlayerOwnPiece(piece, 1 - myPlayer.getColor())) {
+                        return true;
                     }
                 }
             }
@@ -271,10 +287,10 @@ class MyTools {
         return false;
     }
 
-    private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece) {
-        if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
+    private boolean doesPlayerOwnPiece(TablutBoardState.Piece piece, int color) {
+        if (color == TablutBoardState.MUSCOVITE) {
             return (piece == TablutBoardState.Piece.BLACK);
-        } else if (myPlayer.getColor() == TablutBoardState.SWEDE) {
+        } else if (color == TablutBoardState.SWEDE) {
             return piece == TablutBoardState.Piece.WHITE || piece == TablutBoardState.Piece.KING;
         }
         return false;
@@ -314,17 +330,5 @@ class MyTools {
         }
         return sum;
     }
-//
-//    private static double calculateAverageDouble(List<Double> marks) {
-//        Double sum = 0.0;
-//        if (!marks.isEmpty()) {
-//            for (Double mark : marks) {
-//                sum += mark;
-//            }
-//            return sum / marks.size();
-//        }
-//        return sum;
-//    }
-
 
 }
