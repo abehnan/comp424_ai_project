@@ -1,7 +1,6 @@
 package student_player;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import boardgame.Move;
 import boardgame.Player;
@@ -33,7 +32,7 @@ class MyTools {
     // generates a move
     Move getMove(TablutBoardState boardState) {
 
-        Map<TablutMove, Double> moveValues1 = new HashMap<>();
+        Map<TablutMove, Double> moveValues = new HashMap<>();
         int opponentColor = 1 - myPlayer.getColor();
 
         // bait greedy opponents
@@ -44,13 +43,13 @@ class MyTools {
 
         // go through all player's moves
         outerLoop:
-        for (TablutMove playerMove1 : boardState.getAllLegalMoves()) {
-            TablutBoardState boardState1 = (TablutBoardState) boardState.clone();
-            boardState1.processMove(playerMove1);
+        for (TablutMove playerMove : boardState.getAllLegalMoves()) {
+            TablutBoardState boardStatePlusOneTurn = (TablutBoardState) boardState.clone();
+            boardStatePlusOneTurn.processMove(playerMove);
 
             // check for win conditions
-            if (boardState1.gameOver() && boardState1.getWinner() == myPlayer.getColor()) {
-                return playerMove1;
+            if (boardStatePlusOneTurn.gameOver() && boardStatePlusOneTurn.getWinner() == myPlayer.getColor()) {
+                return playerMove;
             }
 
             if (myPlayer.getColor() == TablutBoardState.MUSCOVITE) {
@@ -62,36 +61,35 @@ class MyTools {
 //                }
 
                 // check that we can have a piece on all edges
-                if (boardState1.getNumberPlayerPieces(myPlayer.getColor()) > 5) {
-                    if (!doesPlayerHavePieceOnAllEdges(boardState1)) {
+                if (boardStatePlusOneTurn.getNumberPlayerPieces(myPlayer.getColor()) > 5) {
+                    if (!allEdgesSecure(boardStatePlusOneTurn)) {
                         continue;
                     }
                 }
             }
 
             // go through all opponents moves
-            for (TablutMove opponentMove : boardState1.getAllLegalMoves()) {
-                TablutBoardState boardState2 = (TablutBoardState) boardState1.clone();
-                boardState2.processMove(opponentMove);
+            for (TablutMove opponentMove : boardStatePlusOneTurn.getAllLegalMoves()) {
+                TablutBoardState boardStatePlusTwoTurns = (TablutBoardState) boardStatePlusOneTurn.clone();
+                boardStatePlusTwoTurns.processMove(opponentMove);
 
                 // check for opponent win condition
-                if (boardState2.gameOver() && boardState2.getWinner() == opponentColor) {
+                if (boardStatePlusTwoTurns.gameOver() && boardStatePlusTwoTurns.getWinner() == opponentColor) {
                     continue outerLoop;
                 }
 
                 // check if opponent can trap the king
                 if (myPlayer.getColor() == TablutBoardState.SWEDE) {
-                    if (boardState2.getLegalMovesForPosition(boardState2.getKingPosition()).size() == 0) {
+                    if (boardStatePlusTwoTurns.getLegalMovesForPosition(boardStatePlusTwoTurns.getKingPosition()).size() == 0) {
                         continue outerLoop;
                     }
                 }
 
             }
-            moveValues1.put(playerMove1, evalMove(boardState, boardState1, playerMove1));
+            moveValues.put(playerMove, evalMove(boardState, boardStatePlusOneTurn, playerMove));
         }
 
-        Move myMove = getBestMove(boardState, moveValues1);
-        return myMove == null ? boardState.getRandomMove() : myMove;
+        return getBestMove(boardState, moveValues);
     }
 
     // evaluates the value of a move using the appropriate heuristic
@@ -312,7 +310,7 @@ class MyTools {
     }
 
     // returns true if the player owns at least one unit all all 4 edges of the game board
-    private boolean doesPlayerHavePieceOnAllEdges(TablutBoardState boardState) {
+    private boolean allEdgesSecure(TablutBoardState boardState) {
         boolean pieceFound = false;
 
         for (int i = 0; i < 9; i++) {
@@ -371,6 +369,7 @@ class MyTools {
     // returns the best move to choose, if more than one option, runs simulations on the moves
     private Move getBestMove(TablutBoardState boardState, Map<TablutMove, Double> moveValues) {
 
+        // find move with highest value
         Map.Entry<TablutMove, Double> maxEntry = null;
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
@@ -382,6 +381,7 @@ class MyTools {
             return boardState.getRandomMove();
         }
 
+        // check if multiple moves have max value
         List<TablutMove> bestMoves = new ArrayList<>();
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (entry.getValue().compareTo(maxEntry.getValue()) == 0) {
@@ -407,6 +407,8 @@ class MyTools {
     private Move simulateBestMoves(TablutBoardState initialBoardState, List<TablutMove> bestMoves) {
 
         Map<TablutMove, Double> moveValues = new HashMap<>();
+
+        // simulate
         for (TablutMove move: bestMoves) {
             double wins = 0;
             double numGames = 15;
@@ -424,6 +426,7 @@ class MyTools {
             moveValues.put(move, wins/numGames);
         }
 
+        // find key with max value and return
         Map.Entry<TablutMove, Double> maxEntry = null;
         for (Map.Entry<TablutMove, Double> entry : moveValues.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
