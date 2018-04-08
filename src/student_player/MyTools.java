@@ -2,11 +2,11 @@ package student_player;
 
 import boardgame.Board;
 import boardgame.Move;
-import boardgame.Player;
 import coordinates.Coord;
 import coordinates.Coordinates;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
+import tablut.TablutPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,18 +16,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class MyTools {
 
-    // TODO
-    // maybe: bonus for moving the a piece into a position where it can attach the king
-    // maybe: act differently if king is in castle
-
-    private final Player myPlayer;
+    private final TablutPlayer myPlayer;
     private final Coord CENTER;
     private final List<Coord> CORNERS;
     private final List<Coord> CENTER_NEIGHBOURS;
     private boolean firstTurn;
 
     // constructor
-    MyTools(Player myPlayer) {
+    MyTools(TablutPlayer myPlayer) {
         this.myPlayer = myPlayer;
         firstTurn = true;
         CENTER = Coordinates.get(4, 4);
